@@ -1,0 +1,22 @@
+# Python and local environments
+env/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Local secrets and Django runtime state
+.env
+db.sqlite3
+staticfiles/
+*.log
+
+# Uploaded files and generated prediction exports can contain participant data
+predictor/ml/tmp_uploads/
+predictor/ml/pred_results/
+
+# Editor and OS files
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini

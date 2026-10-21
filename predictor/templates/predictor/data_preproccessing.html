@@ -1,0 +1,145 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+
+{% block title %}Objective 2: Data Cleaning & Pre-processing{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'predictor/css/data_preprocessing.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="objective">
+
+    <!-- Centered Page Header -->
+    <div class="objective-header">
+        <span class="objective-eyebrow">Objective 2 of 5</span>
+        <h1>Data Cleaning &amp; Pre-processing</h1>
+        <p class="subtitle">
+            Live check against the current <code>data.csv</code> dataset — re-run on every page load.
+            <br>
+            Checked at <span class="timestamp-note">{{ missing_report.checked_at }}</span>
+        </p>
+    </div>
+
+    <!-- CARD 1: MISSING VALUE REPORT -->
+    <div class="obj-card">
+        {% if missing_report.objective_met %}
+            <div class="status-banner pass">
+                ✓ All {{ missing_report.total_columns }} retained columns are within the 5% missing-value threshold.
+            </div>
+        {% else %}
+            <div class="status-banner fail">
+                ✕ {{ missing_report.columns_over_threshold }} of {{ missing_report.total_columns }} columns exceed the 5% missing-value threshold.
+            </div>
+        {% endif %}
+
+        <div class="table-wrapper">
+            <table class="missing-table">
+                <thead>
+                    <tr>
+                        <th>Column Name</th>
+                        <th style="text-align: right;">Missing %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in missing_report.rows %}
+                        {% if row.missing_pct > 0 %}
+                        <tr>
+                            <td><code>{{ row.column }}</code></td>
+                            <td class="{% if row.exceeds_threshold %}exceeds{% endif %}">{{ row.missing_pct }}%</td>
+                        </tr>
+                        {% endif %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; color: var(--ink-500, #5b6b7c); padding: 1.5rem;">
+                                No missing values detected across dataset columns.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CARD 2: CLASS BALANCE DISTRIBUTION -->
+    <div class="obj-card chart-section">
+        <h5 class="section-label">Class balance — derived risk label ({{ balance.total }} rows)</h5>
+        
+        {% for row in balance_rows %}
+        <div class="bar-row">
+            <div class="bar-label">{{ row.label }}</div>
+            <div class="bar-track">
+                <div class="bar-fill {{ row.label }}" style="width: {{ row.pct }}%;"></div>
+            </div>
+            <div class="bar-value">{{ row.count }} ({{ row.pct }}%)</div>
+        </div>
+        {% endfor %}
+
+        <p class="info-note">
+            Class imbalance is addressed at training time via <code>class_weight='balanced_subsample'</code> rather than synthetic oversampling — see Objective 3.
+        </p>
+    </div>
+
+    <section class="obj-card documented-methods-card" aria-labelledby="preprocessing-methods-title">
+        <div class="methods-heading">
+            <div>
+                <span class="results-kicker">Documented analysis procedure</span>
+                <h2 id="preprocessing-methods-title">Preprocessing steps used before model fitting</h2>
+            </div>
+            <span class="sample-size-badge">Chapter 4 · analytic n = 468</span>
+        </div>
+        <p class="methods-intro">The live checks above update from the configured dataset. The steps below summarize the preparation applied to the Chapter 4 analytic sample and the saved-model input pipeline.</p>
+
+        <div class="missingness-summary">
+            <span class="missingness-icon" aria-hidden="true">!</span>
+            <div>
+                <strong>How missingness was handled</strong>
+                <p>Chapter 4 reports that the highest post-cleaning missingness was 3.20%, below the 5% per-feature limit. The missing values in <code>mostUsedDrug</code> and <code>howManyTimesYouUsedLast30Days</code> were structurally not applicable for respondents who had never used a substance. They were treated as not applicable, not filled in as evidence of use. For model predictors, the training pipeline records missingness flags for selected fields and imputes using saved training-set values: medians for flagged ordinal fields and modes for other ordinal fields.</p>
+            </div>
+        </div>
+
+        <ol class="preprocessing-steps">
+            <li>
+                <span class="step-number">01</span>
+                <div><h3>Check eligibility and internal consistency</h3>
+                    <p>Responses were screened for valid values and logical agreement between lifetime use and recent use. One internally inconsistent record (never used, but reported recent use) was excluded when constructing the three-level outcome, leaving 468 records for Chapter 4 modelling.</p></div>
+            </li>
+            <li>
+                <span class="step-number">02</span>
+                <div><h3>Standardise text and correct category errors</h3>
+                    <p>Duplicate categories caused by typing variations were merged before encoding, including <code>stronlyDisagree</code> to <code>stronglyDisagree</code>, age band <code>30_36</code> to <code>30_35</code>, and <code>formallyEmployed</code> to <code>employed</code>. The same corrections are applied by the prediction preprocessing code.</p></div>
+            </li>
+            <li>
+                <span class="step-number">03</span>
+                <div><h3>Map ordered answers and preserve missingness</h3>
+                    <p>Ordinal survey responses were mapped to ordered numeric codes. For designated predictor fields, a missingness indicator was created before imputation so the model can retain information that an answer was absent. “Prefer not to say” income is treated as missing by the training pipeline.</p></div>
+            </li>
+            <li>
+                <span class="step-number">04</span>
+                <div><h3>Impute predictor values consistently</h3>
+                    <p>Missing predictor values were filled from the training data rather than recalculated from an individual prediction. Selected fields use their saved median; other ordinal fields use their saved mode. The preprocessing artefacts store these values so training and live prediction use the same transformation.</p></div>
+            </li>
+            <li>
+                <span class="step-number">05</span>
+                <div><h3>Encode categories and align model features</h3>
+                    <p>Nominal text categories were one-hot encoded. Rare provinces and known duplicate labels were consolidated first. At prediction time, the generated columns are aligned to the saved training feature list; absent category columns are set to zero.</p></div>
+            </li>
+            <li>
+                <span class="step-number">06</span>
+                <div><h3>Construct targets and prevent leakage</h3>
+                    <p>The lifetime-use and recent-use targets are derived from their respective survey questions. Target fields, identifiers and post-outcome substance details are excluded from predictors so the model does not receive information that reveals the answer.</p></div>
+            </li>
+            <li>
+                <span class="step-number">07</span>
+                <div><h3>Validate ranges and handle class imbalance during fitting</h3>
+                    <p>Values were checked against valid ranges; no separate statistical outlier-removal step was applied. The Chapter 4 Random Forest used <code>class_weight='balanced_subsample'</code> for class imbalance. SMOTE was not used in the reported final modelling procedure.</p></div>
+            </li>
+        </ol>
+        <p class="methods-caveat"><strong>Interpretation note:</strong> Chapter 4 identifies modal imputation and manual category correction as possible limitations. Imputation preserves records but can reduce variation, so results should be interpreted with that limitation in mind.</p>
+        <p class="methods-source">Documented in Chapter 4, Sections 4.2.2, 4.4, 4.8 and 4.9; predictor imputation and feature alignment follow the saved-model preprocessing pipeline.</p>
+    </section>
+
+</div>
+
+{% endblock %}

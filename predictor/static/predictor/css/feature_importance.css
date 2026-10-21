@@ -1,0 +1,272 @@
+/* ==========================================================================
+   Objective 4: Feature Importance & Evaluation
+   Path: static/predictor/css/feature_importance.css
+   ========================================================================== */
+
+.objective {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   1. Centered Header Section
+   -------------------------------------------------------------------------- */
+.objective-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6, 2rem);
+  padding-bottom: var(--space-5, 1.5rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+}
+
+.objective-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-700, #1f5c4d);
+  background: var(--teal-100, #dcece6);
+  padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.objective-header h1 {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: clamp(1.85rem, 1.4rem + 1.4vw, 2.6rem);
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  margin: 0 0 var(--space-2, 0.5rem);
+  line-height: 1.15;
+}
+
+.objective-header .subtitle {
+  font-size: 0.95rem;
+  color: var(--ink-500, #5b6b7c);
+  margin: 0 auto;
+  max-width: 65ch;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   2. Card Wrappers & Status Banners
+   -------------------------------------------------------------------------- */
+.obj-card {
+  background: var(--surface-1, #ffffff);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-6, 2rem);
+  margin-bottom: var(--space-5, 1.5rem);
+  box-shadow: 0 1px 3px rgba(19, 26, 34, 0.02);
+}
+
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: var(--space-5, 1.5rem);
+  line-height: 1.4;
+}
+
+.status-banner.pass {
+  background-color: var(--teal-100, #dcece6);
+  color: var(--teal-800, #164338);
+  border: 1px solid var(--teal-200, #b8d9ce);
+}
+
+.status-banner.fail {
+  background-color: #fde8e8;
+  color: #9b1c1c;
+  border: 1px solid #f8b4b4;
+}
+
+/* --------------------------------------------------------------------------
+   3. Feature Importance Graphs
+   -------------------------------------------------------------------------- */
+.section-label {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-4, 1rem);
+}
+
+.section-label-spaced {
+  margin-top: var(--space-6, 2rem);
+  padding-top: var(--space-5, 1.5rem);
+  border-top: 1px solid var(--hairline, #dfe3df);
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 70px;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-2, 0.5rem);
+  transition: background-color 0.15s ease;
+}
+
+.bar-row:hover {
+  background-color: var(--surface-2, #eef1ee);
+}
+
+.bar-row:last-child {
+  margin-bottom: 0;
+}
+
+.bar-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink-800, #1b2430);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono, monospace);
+}
+
+.bar-track {
+  width: 100%;
+  height: 14px;
+  background: var(--surface-2, #eef1ee);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bar-fill {
+  height: 100%;
+  min-width: 6px;
+  background: linear-gradient(90deg, var(--teal-700, #1f5c4d), var(--teal-500, #3f9682));
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar-row:hover .bar-fill {
+  background: linear-gradient(90deg, var(--teal-600, #2e7d6b), var(--teal-500, #3f9682));
+}
+
+.bar-value {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink-900, #131a22);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   4. Tables (Classification Report & Confusion Matrix)
+   -------------------------------------------------------------------------- */
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-sm, 6px);
+  margin-bottom: var(--space-5, 1.5rem);
+}
+
+.report-table, .cm-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.report-table th, .cm-table th {
+  background-color: var(--surface-2, #eef1ee);
+  color: var(--ink-700, #2b3644);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+}
+
+.report-table td, .cm-table td {
+  padding: var(--space-3, 0.65rem) var(--space-4, 1rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+  color: var(--ink-800, #1b2430);
+}
+
+.report-table tr:last-child td, .cm-table tr:last-child td {
+  border-bottom: none;
+}
+
+.report-table tr:hover td, .cm-table tr:hover td {
+  background-color: var(--surface-2, #f4f6f4);
+}
+
+.report-table td:not(:first-child), .cm-table td {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Confusion Matrix Header / Row Callouts */
+.cm-table th {
+  text-align: center;
+}
+
+.cm-table td {
+  text-align: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9rem;
+}
+
+.cm-table th.cm-row-header {
+  text-align: left;
+  background-color: var(--surface-1, #ffffff);
+  border-right: 1px solid var(--hairline, #dfe3df);
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+}
+
+/* --------------------------------------------------------------------------
+   5. Empty State Card
+   -------------------------------------------------------------------------- */
+.empty-card {
+  text-align: center;
+  padding: var(--space-6, 3rem) var(--space-4, 1.5rem);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.empty-card h3 {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 1.4rem;
+  color: var(--ink-900, #131a22);
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.empty-card p {
+  color: var(--ink-500, #5b6b7c);
+  font-size: 0.92rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .obj-card {
+    padding: var(--space-4, 1rem);
+  }
+  .bar-row {
+    grid-template-columns: 120px 1fr 50px;
+    gap: var(--space-2, 0.5rem);
+  }
+}

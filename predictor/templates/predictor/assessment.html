@@ -1,0 +1,92 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+
+{% block title %}New Assessment{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'predictor/css/assessment.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="assessment">
+    <h1>Socio-Economic & Digital Behavior Assessment</h1>
+    <p class="source">Based on the Random Forest predictive model research</p>
+
+    {% if messages %}
+        <div class="upload-messages">
+            {% for message in messages %}
+                <div class="upload-message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="upload-card">
+
+        <a href="{% url 'download-sample' %}" class="btn-download-sample">
+            Download sample template (.xlsx)
+        </a>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form" id="bulk-upload-form" action="{% url 'bulk-upload' %}">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="bulk_upload">
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            <div class="upload-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 15V4M12 4L7.5 8.5M12 4l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="upload-text">
+                <span class="upload-title">Upload a batch of records</span>
+                <span class="upload-hint">CSV or Excel (.csv, .xlsx, .xls) — must match the sample template's columns exactly</span>
+            </div>
+
+            <div class="upload-controls">
+                <label for="bulk-file" class="upload-choose">
+                    Choose file
+                    <input type="file" id="bulk-file" name="bulk_file" accept=".csv,.xlsx,.xls">
+                </label>
+                <span class="upload-filename" id="bulk-filename">No file selected</span>
+                <button type="submit" class="btn-upload">Upload &amp; validate</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="divider-with-label"><span>or fill in a single assessment</span></div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            {% for field in form %}
+            <div class="col-md-6 field-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="d-grid mt-3">
+            <button type="submit" class="btn-submit">Generate risk score</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var input = document.getElementById('bulk-file');
+        var name = document.getElementById('bulk-filename');
+        if (!input || !name) return;
+        input.addEventListener('change', function () {
+            name.textContent = input.files.length ? input.files[0].name : 'No file selected';
+        });
+    });
+</script>
+
+<script src="{% static 'predictor/js/assessment.js' %}"></script>
+{% endblock %}

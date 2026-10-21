@@ -1,0 +1,374 @@
+/* ==========================================================================
+   Assessment — intake form
+   Extends the tokens defined in base.css
+   ========================================================================== */
+
+.assessment {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.assessment h1 {
+  text-align: center;
+  margin-bottom: var(--space-2);
+}
+
+.assessment .source {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--ink-500);
+  margin-bottom: var(--space-6);
+}
+
+/* ---- Bulk upload card ---- */
+.upload-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  background: var(--surface-1);
+  border: 1px dashed var(--ink-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-5) var(--space-6);
+  margin-bottom: var(--space-5);
+  transition: border-color 0.15s ease, background 0.15s ease;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+.upload-card:hover {
+  border-color: var(--teal-500);
+  background: rgba(63, 177, 152, 0.1);
+}
+
+.upload-form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.upload-icon {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--teal-100);
+  color: var(--teal-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload-icon svg { width: 22px; height: 22px; }
+
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 220px;
+}
+.upload-title {
+  font-weight: 600;
+  color: var(--ink-800);
+  font-size: 0.92rem;
+}
+.upload-hint {
+  font-size: 0.78rem;
+  color: var(--ink-500);
+}
+
+.upload-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.upload-choose {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-800);
+  background: var(--surface-0);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.upload-choose:hover { border-color: var(--ink-300); }
+.upload-choose input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-filename {
+  font-size: 0.82rem;
+  color: var(--ink-500);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-upload {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #fff;
+  background: #176d5a;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+.btn-upload:hover { background: #1d806a; }
+.btn-upload:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .upload-card { flex-direction: column; align-items: stretch; }
+  .upload-controls { justify-content: flex-start; }
+}
+
+/* ---- Divider between upload and single-entry form ---- */
+.divider-with-label {
+  position: relative;
+  text-align: center;
+  margin: var(--space-6) 0;
+}
+.divider-with-label::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hairline);
+}
+.divider-with-label span {
+  position: relative;
+  background: var(--surface-0);
+  padding: 0 var(--space-4);
+  font-size: 0.78rem;
+  color: var(--ink-500);
+}
+
+/* ---- Form shell ---- */
+.assessment form {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: var(--space-6) var(--space-7);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.assessment .row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 var(--space-5);
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .assessment .row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .assessment .row { grid-template-columns: 1fr; }
+  .assessment form { padding: var(--space-5); }
+}
+
+/* Bootstrap ships col-md-6 with width:50%/flex-basis:50% — neutralize that
+   so each field fills its grid cell instead of halving again inside it. */
+.assessment .row > .col-md-6 {
+  width: 100%;
+  max-width: 100%;
+  flex: unset;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ---- Field groups ----
+   Django renders each field's widget with no class of its own, so target
+   the elements directly inside .field-group rather than relying on
+   framework classes. */
+.assessment .field-group {
+  margin-bottom: var(--space-5);
+  padding: 0;
+}
+
+.assessment .field-group label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink-700);
+  margin-bottom: var(--space-2);
+}
+
+.assessment .field-group input[type="text"],
+.assessment .field-group input[type="number"],
+.assessment .field-group input[type="email"],
+.assessment .field-group select,
+.assessment .field-group textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  padding: var(--space-3);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--surface-0);
+  color: var(--ink-800);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.assessment .field-group input:hover,
+.assessment .field-group select:hover,
+.assessment .field-group textarea:hover {
+  border-color: var(--ink-300);
+}
+
+.assessment .field-group input:focus,
+.assessment .field-group select:focus,
+.assessment .field-group textarea:focus {
+  outline: none;
+  border-color: var(--teal-500);
+  background: var(--surface-1);
+  box-shadow: 0 0 0 3px rgba(63, 150, 130, 0.15);
+}
+
+.assessment .field-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3e%3cpath fill='%238d99a3' d='M1 1l5 5 5-5'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  padding-right: var(--space-6);
+}
+
+.assessment .field-group select option {
+  background: var(--surface-0);
+  color: var(--ink-800);
+}
+
+.assessment .field-group input[type="checkbox"],
+.assessment .field-group input[type="radio"] {
+  width: auto;
+  accent-color: var(--teal-600);
+  margin-right: var(--space-2);
+}
+
+/* ---- Radio / checkbox groups (Django widgets wrap options in <ul>) ---- */
+.assessment .field-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.assessment .field-group ul li {
+  font-size: 0.9rem;
+  color: var(--ink-700);
+  display: flex;
+  align-items: center;
+}
+
+/* ---- Field-level errors ---- */
+.assessment .field-group .errorlist {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+}
+.assessment .field-group .errorlist li {
+  font-size: 0.8rem;
+  color: var(--clay-600);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.assessment .field-group .errorlist li::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--clay-600);
+  flex: 0 0 auto;
+}
+.assessment .field-group:has(.errorlist) input,
+.assessment .field-group:has(.errorlist) select,
+.assessment .field-group:has(.errorlist) textarea {
+  border-color: var(--clay-600);
+}
+
+/* ---- Submit ---- */
+.assessment .d-grid { margin-top: var(--space-2) !important; }
+
+.btn-submit {
+  width: 100%;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #176d5a;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn-submit:hover { background: #1d806a; }
+.btn-submit:active { transform: translateY(1px); }
+.btn-submit:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+
+
+
+
+/* --- predictor/static/predictor/css/bulk_upload_bar.css --------------- */
+
+#bulk-upload-bar {
+    position: fixed;
+    left: 50%;
+    bottom: -100px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #1f2937;
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition: bottom 0.25s ease;
+    z-index: 1000;
+    max-width: 90vw;
+    font-size: 0.95rem;
+}
+
+#bulk-upload-bar.visible {
+    bottom: 24px;
+}
+
+#bulk-upload-bar .bar-message.error { color: #fca5a5; }
+#bulk-upload-bar .bar-message.success { color: #86efac; }
+
+#bulk-upload-bar .bar-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#bulk-upload-bar .bar-close {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    margin-left: 0.25rem;
+}

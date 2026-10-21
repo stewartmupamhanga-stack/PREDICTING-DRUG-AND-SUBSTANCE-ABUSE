@@ -1,0 +1,334 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}Objective 3: Model Training{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'predictor/css/training.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="objective">
+
+    <!-- Centered Header Section -->
+    <div class="objective-header">
+        <span class="objective-eyebrow">Objective 3 of 5</span>
+        <h1>Model Training &amp; Hyperparameter Tuning</h1>
+        <p class="subtitle">
+            {% if pilot_mode_enabled %}Pilot models are active; their validation accuracy and macro F1 are shown below.{% else %}Default Random Forest mode is active; the Chapter 4 reported performance is shown below.{% endif %}
+        </p>
+    </div>
+
+    {% if pilot_mode_enabled %}
+    {% if pilot_display %}
+    <section class="obj-card pilot-active-results-card" aria-labelledby="pilot-results-title">
+        <div class="results-heading-row">
+            <div>
+                <span class="results-kicker">Pilot mode active</span>
+                <h2 id="pilot-results-title">Selected pilot model performance</h2>
+            </div>
+            <span class="sample-size-badge">Last trained: {{ pilot_display.trained_at }}</span>
+        </div>
+        <p class="results-intro">The active pilot uses separate models for lifetime use and recent use. Each winner is selected separately by its validation accuracy; macro F1 is also reported for that winning model.</p>
+        <div class="pilot-score-grid">
+            <article class="pilot-score-card">
+                <span class="results-kicker">Ever-used model accuracy</span>
+                <h3>{{ pilot_display.ever.name }}</h3>
+                <div class="pilot-score-values">
+                    <div><strong>{{ pilot_display.ever.accuracy|floatformat:3 }}</strong><span>Ever-used accuracy (5-fold CV)</span></div>
+                    <div><strong>{{ pilot_display.ever.macro_f1|floatformat:3 }}</strong><span>CV macro F1</span></div>
+                </div>
+                <p>{{ pilot_display.ever.validation }} · n={{ pilot_display.ever.rows }}</p>
+            </article>
+            <article class="pilot-score-card">
+                <span class="results-kicker">30-day model accuracy</span>
+                <h3>{{ pilot_display.recent.name }}</h3>
+                <div class="pilot-score-values">
+                    <div><strong>{{ pilot_display.recent.accuracy|floatformat:3 }}</strong><span>30-day accuracy (out-of-fold)</span></div>
+                    <div><strong>{{ pilot_display.recent.macro_f1|floatformat:3 }}</strong><span>OOF macro F1</span></div>
+                </div>
+                <p>{{ pilot_display.recent.validation }} · n={{ pilot_display.recent.rows }}</p>
+            </article>
+        </div>
+    </section>
+    {% else %}
+    <section class="obj-card status-banner fail" role="status">
+        Pilot mode is enabled, but saved pilot evaluation metrics are unavailable. Retrain the pilot models to restore the results display.
+    </section>
+    {% endif %}
+    {% else %}
+    <section class="obj-card chapter4-results-card" aria-labelledby="chapter4-results-title">
+        <div class="results-heading-row">
+            <div>
+                <span class="results-kicker">Dissertation results · Chapter 4, Table 4.2</span>
+                <h2 id="chapter4-results-title">Reported model performance</h2>
+            </div>
+            <span class="sample-size-badge">5-fold stratified CV · n={{ chapter4_results.sample_size }}</span>
+        </div>
+        <p class="results-intro">These are the reported study results. The chained model predicts the three-level risk outcome; the two component models predict their binary outcomes separately.</p>
+        <div class="table-wrapper results-table-wrapper">
+            <table class="param-table results-table">
+                <thead>
+                    <tr><th>Model</th><th>Target</th><th>Accuracy</th><th>Macro F1</th></tr>
+                </thead>
+                <tbody>
+                    {% for result in chapter4_results.models %}
+                    <tr>
+                        <td><strong>{{ result.name }}</strong></td>
+                        <td>{{ result.target }}</td>
+                        <td class="reported-score">{{ result.accuracy|floatformat:2 }}</td>
+                        <td class="reported-score">{{ result.macro_f1|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="results-footnote">Accuracy is the proportion correctly classified. Macro F1 gives equal weight to each class; the three-class result meets the study target of 0.80.</p>
+    </section>
+    {% endif %}
+
+    {% if user.is_staff %}
+        <div class="obj-card">
+            <h5 class="section-label">Active prediction models</h5>
+            <p class="subtitle">
+                Current mode: <strong>{% if pilot_mode_enabled %}Pilot{% else %}Default Random Forest{% endif %}</strong>
+            </p>
+            <form id="pilot-mode-form">
+                {% csrf_token %}
+                <button type="button" class="btn btn-primary" id="pilot-mode-button"
+                        data-enabled="{% if pilot_mode_enabled %}false{% else %}true{% endif %}">
+                    {% if pilot_mode_enabled %}Switch to default Random Forest{% else %}Activate pilot models{% endif %}
+                </button>
+                <span id="pilot-mode-message" role="status" aria-live="polite"></span>
+            </form>
+        </div>
+        <script>
+            (() => {
+                const button = document.getElementById("pilot-mode-button");
+                const form = document.getElementById("pilot-mode-form");
+                const message = document.getElementById("pilot-mode-message");
+                button.addEventListener("click", async () => {
+                    button.disabled = true;
+                    message.textContent = "Updating model mode…";
+                    try {
+                        const response = await fetch("{% url 'pilot-mode' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": form.querySelector("[name=csrfmiddlewaretoken]").value,
+                            },
+                            body: JSON.stringify({ enabled: button.dataset.enabled === "true" }),
+                        });
+                        const payload = await response.json();
+                        if (!response.ok) throw new Error(payload.detail || "Could not switch models.");
+                        window.location.reload();
+                    } catch (error) {
+                        message.textContent = error.message;
+                        button.disabled = false;
+                    }
+                });
+            })();
+        </script>
+    {% endif %}
+
+    {% if not metrics and not pilot_mode_enabled %}
+        <!-- Empty State Card -->
+        <div class="obj-card empty-card">
+            <div class="empty-icon">⚙️</div>
+            <h3>No Training Metadata Found</h3>
+            <p>Run the management command to train models and generate performance evaluation metrics:</p>
+            <code>python manage.py train_models --data &lt;path&gt;</code>
+        </div>
+    {% else %}
+
+        {% if not pilot_mode_enabled %}
+        <!-- Latest live tuning scores; kept separate from the Chapter 4 results above. -->
+        <div class="obj-card latest-run-card">
+            <div class="results-heading-row">
+                <div>
+                    <span class="results-kicker">Current saved artifacts</span>
+                    <h2>Latest default-model tuning run</h2>
+                </div>
+                <span class="timestamp-note">{{ metrics.trained_at }}</span>
+            </div>
+            <p class="results-intro">These are the best cross-validation macro-F1 scores from the latest grid searches for the two binary sub-models. They are tuning scores and should not be read as the Chapter 4 three-class accuracy.</p>
+            <div class="stat-row">
+                <div class="stat-box">
+                    <div class="value">{{ metrics.dataset_size }}</div>
+                    <div class="label">Source rows in this run</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">{{ metrics.cv_f1_macro_model_ever|floatformat:3 }}</div>
+                    <div class="label">CV F1 macro — "ever used" model</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">{{ metrics.cv_f1_macro_model_used30|floatformat:3 }}</div>
+                    <div class="label">CV F1 macro — "used last 30 days" model</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not pilot_mode_enabled %}
+        <!-- Default Random Forest hyperparameters and class balance -->
+        <div class="obj-card">
+            
+            <div class="param-grid">
+                <!-- Ever Used Model Params -->
+                <div>
+                    <h5 class="section-label">Hyperparameters — "ever used"</h5>
+                    <div class="table-wrapper">
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th style="text-align: right;">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, value in metrics.best_params_model_ever.items %}
+                                <tr>
+                                    <td><code>{{ key }}</code></td>
+                                    <td><code>{{ value }}</code></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Used 30 Days Model Params -->
+                <div>
+                    <h5 class="section-label">Hyperparameters — "used in last 30 days"</h5>
+                    <div class="table-wrapper">
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th style="text-align: right;">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key, value in metrics.best_params_model_used30.items %}
+                                <tr>
+                                    <td><code>{{ key }}</code></td>
+                                    <td><code>{{ value }}</code></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Class Balance -->
+            <h5 class="section-label section-label-spaced">Class balance at training time</h5>
+            <div class="table-wrapper">
+                <table class="param-table">
+                    <thead>
+                        <tr>
+                            <th>Class Label</th>
+                            <th style="text-align: right;">Sample Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key, value in metrics.class_balance.items %}
+                        <tr>
+                            <td><code>{{ key }}</code></td>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        {% endif %}
+
+    {% endif %}
+
+    <!-- Pilot Mode Candidate Comparison -->
+    {% if pilot_metrics %}
+        <div class="obj-card">
+            <h5 class="section-label">
+                Pilot Mode — Candidate Model Comparison
+                {% if pilot_mode_enabled %}(currently active){% else %}(currently inactive){% endif %}
+            </h5>
+            <p class="subtitle" style="margin-bottom: 1rem;">
+                Last pilot run: <span class="timestamp-note">{{ pilot_metrics.trained_at }}</span>
+            </p>
+
+            <div class="param-grid">
+                <!-- Ever Used — candidate race -->
+                <div>
+                    <h5 class="section-label">"ever used" — candidates raced</h5>
+                    <div class="table-wrapper">
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th style="text-align: right;">CV accuracy</th>
+                                    <th style="text-align: right;">CV macro F1</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for name, score in pilot_metrics.model_ever.all_candidates.items %}
+                                <tr>
+                                    <td>
+                                        <code>{{ name }}</code>
+                                        {% if name == pilot_metrics.model_ever.winner %}&nbsp;🏆 winner{% endif %}
+                                    </td>
+                                    <td>{{ pilot_metrics.model_ever.comparison|get_item:name|get_item:"cv_accuracy_mean"|floatformat:3 }}</td>
+                                    <td>{{ score|floatformat:3 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Used 30 Days — candidate race -->
+                <div>
+                    <h5 class="section-label">"used in last 30 days" — candidates raced</h5>
+                    <div class="table-wrapper">
+                        <table class="param-table">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th style="text-align: right;">OOF accuracy</th>
+                                    <th style="text-align: right;">OOF macro F1</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for name, score in pilot_metrics.model_used30.all_candidates.items %}
+                                <tr>
+                                    <td>
+                                        <code>{{ name }}</code>
+                                        {% if name == pilot_metrics.model_used30.winner %}&nbsp;🏆 winner{% endif %}
+                                    </td>
+                                    <td>{{ pilot_metrics.model_used30.nested_outer_cv_comparison|get_item:name|get_item:"accuracy"|floatformat:3 }}</td>
+                                    <td>{{ score|floatformat:3 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% elif metrics %}
+        <!-- Only show this nudge once the production model exists, so it
+             doesn't compete with the "run train_models first" empty state above -->
+        <div class="obj-card empty-card">
+            <div class="empty-icon">🧪</div>
+            <h3>No Pilot Run Yet</h3>
+            <p>Race Random Forest, Gradient Boosting, and Logistic Regression candidates against the current production model:</p>
+            <code>python manage.py train_pilot_models --data &lt;path&gt;</code>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

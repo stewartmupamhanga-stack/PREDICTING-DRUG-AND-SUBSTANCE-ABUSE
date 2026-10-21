@@ -1,0 +1,368 @@
+.report {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2.75rem 2.5rem;
+}
+
+.report .label {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin-bottom: 0.35rem;
+}
+
+.report h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2.75rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+}
+
+.report h1.high { color: var(--risk-high); }
+.report h1.moderate { color: var(--risk-moderate); }
+.report h1.low { color: var(--risk-low); }
+
+.confidence-note {
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.confidence-note.low-confidence {
+    color: var(--risk-moderate);
+}
+
+.gauge-track {
+    height: 10px;
+    border-radius: 999px;
+    /* Solid fallback first: if any var() below fails to resolve, the
+       linear-gradient() declaration is dropped entirely and this shows
+       instead of nothing. */
+    background: #3a3a44;
+    background: linear-gradient(
+        to right,
+        var(--risk-low, #3fb198) 0%, var(--risk-low, #3fb198) 33%,
+        var(--risk-moderate, #dc9a4f) 33%, var(--risk-moderate, #dc9a4f) 66%,
+        var(--risk-high, #d97a5e) 66%, var(--risk-high, #d97a5e) 100%
+    );
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    position: relative;
+    margin: 0.5rem 0 0.4rem;
+}
+
+.gauge-marker {
+    position: absolute;
+    top: -6px;
+    left: 50%;   /* starting point before JS animates it to the real value */
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    /* Fixed, theme-independent colors (rather than var(--panel)/var(--ink))
+       so the marker stays visible against the gauge gradient on both
+       light and dark themes, instead of blending into the card behind it. */
+    background: #ffffff;
+    border: 3px solid #14141a;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 2px 6px rgba(0, 0, 0, 0.4);
+    transform: translateX(-50%);
+    transition: left 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gauge-scale {
+    display: flex;
+    justify-content: space-between;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+}
+
+.report p.finding {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 46ch;
+    margin: 1.75rem 0 0;
+}
+
+.report .caveat {
+    background: var(--paper);
+    border-left: 3px solid var(--risk-moderate);
+    padding: 0.85rem 1rem;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin-top: 1.25rem;
+    border-radius: 0 4px 4px 0;
+}
+
+.btn-report {
+    border: 1px solid var(--ink-300);
+    color: var(--ink-800);
+    background: transparent;
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.6rem 1.4rem;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+ 
+.btn-report.high {
+    border-color: var(--risk-elevated) !important;
+    color: var(--risk-elevated) !important;
+}
+.btn-report.high:hover {
+    background: var(--risk-elevated);
+    color: #ffffff !important;
+}
+ 
+.btn-report.moderate {
+    border-color: var(--risk-moderate) !important;
+    color: var(--risk-moderate) !important;
+}
+.btn-report.moderate:hover {
+    background: var(--risk-moderate);
+    color: #ffffff !important;
+}
+ 
+.btn-report.low {
+    border-color: var(--risk-low) !important;
+    color: var(--risk-low) !important;
+}
+.btn-report.low:hover {
+    background: var(--risk-low);
+    color: #ffffff !important;
+}
+
+/* --- Add to predictor/css/result.css ---------------------------------- */
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+.result-table th, .result-table td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+.result-table td.high { color: #b91c1c; font-weight: 600; }
+.result-table td.moderate { color: #b45309; font-weight: 600; }
+.result-table td.low { color: #15803d; font-weight: 600; }
+.result-table td .error { color: #b91c1c; font-style: italic; }
+
+.forward-form {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+@media print {
+    .no-print { display: none !important; }
+}
+
+/* Application-theme aliases for the result-page styles. */
+.report {
+    --panel: var(--surface-1);
+    --paper: var(--surface-2);
+    --line: var(--hairline);
+    --ink: var(--ink-800);
+    --ink-soft: var(--ink-700);
+    --risk-high: var(--risk-elevated);
+    max-width: 1040px;
+    margin: 0 auto;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: clamp(1.25rem, 4vw, 2.75rem);
+    background: linear-gradient(145deg, #1b252c, #151b20);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+    color: var(--ink);
+}
+
+.report > h2 {
+    color: var(--ink-900);
+    overflow-wrap: anywhere;
+}
+
+.report > p,
+.report .finding {
+    max-width: 72ch;
+    color: var(--ink-700);
+}
+
+.report .label {
+    color: var(--ink-500);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.report .confidence-note {
+    color: var(--ink-800);
+}
+
+.report .confidence-note.low-confidence {
+    color: #ffd995;
+}
+
+.report .caveat {
+    background: #352b1c;
+    border: 1px solid #795b2d;
+    border-left: 4px solid #e3ad55;
+    color: #ffe5b3;
+}
+
+.report .gauge-scale {
+    color: var(--ink-700);
+}
+
+.report .table-scroll {
+    border-color: var(--line);
+    border-radius: 8px;
+}
+
+.report .result-table th {
+    z-index: 1;
+    color: var(--ink-800);
+    background: #202a32;
+}
+
+.report .result-table td {
+    color: var(--ink-700);
+    border-color: var(--line);
+}
+
+.report .result-table td.high { color: #ff9c89; }
+.report .result-table td.moderate { color: #ffd184; }
+.report .result-table td.low { color: #82dfc4; }
+.report .result-table td .error { color: #ff9c89; }
+
+.report .forward-form input[type="email"] {
+    border-color: var(--line);
+    background: #10171b;
+    color: var(--ink-800);
+}
+
+.report .forward-form input[type="email"]::placeholder {
+    color: var(--ink-500);
+}
+
+.report .actions .btn {
+    border-color: rgba(112, 212, 190, 0.55);
+    color: #b5eee0;
+    background: #1c2a2a;
+}
+
+.report .actions .btn:hover {
+    color: #071511;
+    background: #70d4be;
+}
+
+@media (max-width: 640px) {
+    .report {
+        padding: 1.25rem 1rem;
+    }
+    .report h1 {
+        font-size: 2.15rem;
+    }
+    .report .actions,
+    .report .forward-form {
+        width: 100%;
+    }
+    .report .forward-form input[type="email"] {
+        min-width: 0;
+        flex: 1 1 100%;
+    }
+}
+
+
+
+/* --- Add to predictor/css/result.css ---------------------------------- */
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--ink);
+}
+.result-table th {
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    position: sticky;
+    top: 0;
+    background: var(--panel);
+}
+.result-table th, .result-table td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+}
+.result-table td.high { color: var(--risk-high, #d97a5e); font-weight: 600; }
+.result-table td.moderate { color: var(--risk-moderate, #dc9a4f); font-weight: 600; }
+.result-table td.low { color: var(--risk-low, #3fb198); font-weight: 600; }
+.result-table td .error { color: var(--risk-high, #d97a5e); font-style: italic; }
+
+/* Scrollable wrapper: caps the table height so a big batch scrolls
+   inside its own box instead of stretching the whole page. Horizontal
+   scroll is included too in case of narrow viewports. */
+.table-scroll {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
+.table-scroll .result-table {
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 1.25rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ink-300);
+    color: var(--ink-800);
+    background: var(--panel);
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.6rem 1.4rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.btn:hover {
+    background: var(--ink-800);
+    color: var(--panel);
+}
+
+.forward-form input[type="email"] {
+    border: 1px solid var(--ink-300);
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.55rem 0.75rem;
+    font-size: 0.95rem;
+}
+
+.forward-form {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+@media print {
+    .no-print { display: none !important; }
+}
+
+
+
+
+

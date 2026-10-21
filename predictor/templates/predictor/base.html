@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Drug & Substance Abuse Risk Predictor{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'predictor/css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <div class="bg-motion" aria-hidden="true">
+        <svg class="bg-graph-svg" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="riskGradient" gradientUnits="userSpaceOnUse" x1="4" y1="96" x2="94" y2="8">
+                    <stop offset="0%"   stop-color="#3fb198" />
+                    <stop offset="50%"  stop-color="#dc9a4f" />
+                    <stop offset="100%" stop-color="#d97a5e" />
+                </linearGradient>
+                <marker id="riskArrowHead" viewBox="0 0 20 20" refX="11" refY="10"
+                        markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+                    <path d="M2 3 L15 10 L2 17" fill="none" stroke="#d97a5e"
+                          stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </marker>
+            </defs>
+
+            <!-- static up-trending line, bottom-left to top-right -->
+            <path id="riskPath" class="bg-graph-line"
+                  d="M4 96 L18 82 L28 88 L40 68 L50 74 L62 50 L72 58 L84 30 L94 8"
+                  fill="none" stroke="url(#riskGradient)" stroke-width="3.2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  vector-effect="non-scaling-stroke"
+                  marker-end="url(#riskArrowHead)" />
+        </svg>
+
+        <!-- plain (non-SVG) dot + glow: driven by JS so they stay perfect
+             circles even though the SVG above is stretched non-uniformly -->
+        <div class="bg-graph-dot-glow"></div>
+        <div class="bg-graph-dot"></div>
+    </div>
+
+    <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">
+        <span></span>
+    </button>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="mark"></div>
+            <div>
+                <div class="wordmark">Substance Abuse<br>Risk Predictor</div>
+                <div class="tagline">Community intervention support</div>
+            </div>
+        </div>
+
+        <div class="nav-section-label">Tool</div>
+        <nav>
+            <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                Risk Assessment
+            </a>
+        </nav>
+
+        <div class="nav-section-label">Research Objectives</div>
+        <nav>
+            <a href="{% url 'objective1' %}" class="{% if request.resolver_match.url_name == 'objective1' %}active{% endif %}">
+                1. Survey Administration
+            </a>
+            <a href="{% url 'objective2' %}" class="{% if request.resolver_match.url_name == 'objective2' %}active{% endif %}">
+                2. Cleaning &amp; Pre-processing
+            </a>
+            <a href="{% url 'objective3' %}" class="{% if request.resolver_match.url_name == 'objective3' %}active{% endif %}">
+                3. Model Training
+            </a>
+            <a href="{% url 'objective4' %}" class="{% if request.resolver_match.url_name == 'objective4' %}active{% endif %}">
+                4. Feature Importance &amp; Evaluation
+            </a>
+            <a href="{% url 'objective5' %}" class="{% if request.resolver_match.url_name == 'objective5' %}active{% endif %}">
+                5. Recommendations
+            </a>
+        </nav>
+
+        <div class="nav-section-label">Model</div>
+        <div class="pilot-toggle-wrap px-3 py-2">
+            <form hidden>{% csrf_token %}</form>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="pilotModeToggle"
+                       {% if pilot_mode_enabled %}checked{% endif %}>
+                <label class="form-check-label" for="pilotModeToggle" id="pilotModeLabel">
+                    {% if pilot_mode_enabled %}
+                        Pilot: {{ pilot_model_ever_name|default:"ever used" }} / {{ pilot_model_used30_name|default:"30-day" }}
+                    {% else %}
+                        Default (Random Forest)
+                    {% endif %}
+                </label>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            For use alongside professional judgment, not in place of it.
+        </div>
+    </div>
+
+    <div class="content-area">
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'predictor/js/base.js' %}"></script>
+    <script src="{% static 'predictor/js/bg-motion.js' %}"></script>
+
+    <script>
+        (function () {
+            var toggle = document.getElementById('pilotModeToggle');
+            var label = document.getElementById('pilotModeLabel');
+            if (!toggle) return;
+            var pilotEverName = "{{ pilot_model_ever_name|escapejs }}";
+            var pilotUsed30Name = "{{ pilot_model_used30_name|escapejs }}";
+
+            // Adjust this if 'pilot-mode' is registered under a namespace,
+            var PILOT_MODE_URL = "{% url 'pilot-mode' %}";
+
+            function setLabel(enabled) {
+                label.textContent = enabled
+                    ? 'Pilot: ' + (pilotEverName || 'ever used') + ' / ' + (pilotUsed30Name || '30-day')
+                    : 'Default (Random Forest)';
+            }
+
+            // Server-rendered state is authoritative at first paint.
+            setLabel(toggle.checked);
+
+            function getCookie(name) {
+                var cookie = document.cookie.split('; ').find(function (item) {
+                    return item.indexOf(name + '=') === 0;
+                });
+                return cookie ? decodeURIComponent(cookie.slice(name.length + 1)) : '';
+            }
+
+            function getCsrfToken() {
+                var tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+                return tokenInput ? tokenInput.value : getCookie('csrftoken');
+            }
+
+            function readResponse(res) {
+                var contentType = res.headers.get('content-type') || '';
+                if (contentType.indexOf('application/json') === -1) {
+                    throw new Error('Could not read the saved model mode.');
+                }
+                return res.json().then(function (data) {
+                    if (!res.ok) {
+                        throw new Error(data.detail || ('Request failed (' + res.status + ').'));
+                    }
+                    return data;
+                });
+            }
+
+            // Reflect the actual server-side state on load, so a page
+            // refresh never shows a stale toggle position.
+            fetch(PILOT_MODE_URL)
+                .then(readResponse)
+                .then(function (data) {
+                    pilotEverName = data.pilot_model_ever_name || '';
+                    pilotUsed30Name = data.pilot_model_used30_name || '';
+                    toggle.checked = !!data.pilot_mode_enabled;
+                    setLabel(toggle.checked);
+                })
+                .catch(function () {
+                    // Keep the persisted server-rendered state if sync fails.
+                });
+
+            toggle.addEventListener('change', function () {
+                var enabled = toggle.checked;
+                toggle.disabled = true;
+
+                fetch(PILOT_MODE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    body: JSON.stringify({ enabled: enabled }),
+                })
+                    .then(readResponse)
+                    .then(function (data) {
+                        pilotEverName = data.pilot_model_ever_name || pilotEverName;
+                        pilotUsed30Name = data.pilot_model_used30_name || pilotUsed30Name;
+                        setLabel(data.pilot_mode_enabled);
+                        // Refresh mode-specific results and controls using
+                        // the newly persisted server state.
+                        window.location.reload();
+                    })
+                    .catch(function (error) {
+                        // Revert the switch if the server rejected the change
+                        // (e.g. pilot mode has no trained models yet).
+                        toggle.checked = !enabled;
+                        setLabel(!enabled);
+                        alert('Could not switch model mode: ' + error.message);
+                    })
+                    .finally(function () {
+                        toggle.disabled = false;
+                    });
+            });
+        })();
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

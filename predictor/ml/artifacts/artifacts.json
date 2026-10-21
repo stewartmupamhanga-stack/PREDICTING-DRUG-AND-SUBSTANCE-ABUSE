@@ -1,0 +1,294 @@
+{
+  "ordinal_maps": {
+    "age": {
+      "21_24": 1,
+      "18_20": 0,
+      "25_29": 2,
+      "30_35": 3
+    },
+    "highestEducation": {
+      "tetiary": 0,
+      "aLevel": 1,
+      "ordinaryLevel": 2,
+      "someSecondary": 3
+    },
+    "monthlyIncomeTotal": {
+      "251_500": 2,
+      "500+": 3,
+      "preferNotToSay": -1,
+      "101_250": 1,
+      "100-": 0
+    },
+    "strugle12MonthsHead": {
+      "rarely": 1,
+      "never": 0,
+      "sometimes": 2,
+      "always": 3,
+      "often": 4
+    },
+    "comfortableSharingPersonalProblems": {
+      "stronglyDisagree": -2,
+      "disagree": -1,
+      "neutral": 0,
+      "agree": 1,
+      "stronglyAgree": 2
+    },
+    "eatDinnerWithFamily": {
+      "stronglyDisagree": -2,
+      "disagree": -1,
+      "neutral": 0,
+      "agree": 1,
+      "stronglyAgree": 2
+    },
+    "guadianKnowMyWhereabouts": {
+      "stronglyDisagree": -2,
+      "disagree": -1,
+      "neutral": 0,
+      "agree": 1,
+      "stronglyAgree": 2
+    },
+    "outOf5FriendsUseDrugs": {
+      "0": 0,
+      "1_2": 1,
+      "3_4": 2,
+      "5": 3
+    },
+    "howFriendsFeelTryingDrugs": {
+      "stronglyDisapprove": 0,
+      "disapprove": 1,
+      "neutral": 2,
+      "approve": 3,
+      "stronglyApprove": 4
+    },
+    "unsupervisedEveningsInAWeek": {
+      "0": 0,
+      "1_2": 1,
+      "3_4": 2,
+      "5+": 3
+    },
+    "participationInOrganizedProsocialActivitiesInAWeek": {
+      "0": 0,
+      "1_2": 1,
+      "3_4": 2,
+      "5+": 3,
+      "never": -1
+    },
+    "hoursSpentOnSocialMedia": {
+      "1-": -1,
+      "1_3": 0,
+      "3_5": 1,
+      "5+": 2
+    },
+    "howTimesSeenDrugSupportContentIn30Days": {
+      "rarely": 0,
+      "sometimes": 1,
+      "often": 2,
+      "daily": 3,
+      "never": -1
+    }
+  },
+  "nominal_cols": [
+    "province",
+    "gender",
+    "main_activity",
+    "employStatusHead",
+    "livingSitu18Years",
+    "parentsWorkedDiaspora6Months",
+    "relativeProblemWithDrugs",
+    "mostUsedPlatform"
+  ],
+  "saved_medians": {
+    "monthlyIncomeTotal": 2.0,
+    "comfortableSharingPersonalProblems": 1.0,
+    "eatDinnerWithFamily": 1.0,
+    "guadianKnowMyWhereabouts": 1.0
+  },
+  "saved_modes": {
+    "age": 1.0,
+    "highestEducation": 0.0,
+    "monthlyIncomeTotal": 2.0,
+    "strugle12MonthsHead": 1.0,
+    "comfortableSharingPersonalProblems": 1.0,
+    "eatDinnerWithFamily": 1.0,
+    "guadianKnowMyWhereabouts": 1.0,
+    "outOf5FriendsUseDrugs": 0.0,
+    "howFriendsFeelTryingDrugs": 1.0,
+    "unsupervisedEveningsInAWeek": 1.0,
+    "participationInOrganizedProsocialActivitiesInAWeek": 1.0,
+    "hoursSpentOnSocialMedia": 2.0,
+    "howTimesSeenDrugSupportContentIn30Days": 0.0
+  },
+  "leakage_cols": [
+    "everUsedIllegalDrugs",
+    "howManyTimesYouUsedLast30Days",
+    "mostUsedDrug",
+    "drugsUsed",
+    "id",
+    "date"
+  ],
+  "final_feature_columns": [
+    "age",
+    "highestEducation",
+    "monthlyIncomeTotal",
+    "strugle12MonthsHead",
+    "comfortableSharingPersonalProblems",
+    "eatDinnerWithFamily",
+    "guadianKnowMyWhereabouts",
+    "outOf5FriendsUseDrugs",
+    "howFriendsFeelTryingDrugs",
+    "unsupervisedEveningsInAWeek",
+    "participationInOrganizedProsocialActivitiesInAWeek",
+    "hoursSpentOnSocialMedia",
+    "howTimesSeenDrugSupportContentIn30Days",
+    "monthlyIncomeTotal_missing",
+    "comfortableSharingPersonalProblems_missing",
+    "eatDinnerWithFamily_missing",
+    "guadianKnowMyWhereabouts_missing",
+    "province_harare",
+    "province_manicaland",
+    "province_mashEast",
+    "province_midlands",
+    "province_other",
+    "gender_female",
+    "gender_male",
+    "main_activity_employed",
+    "main_activity_neet",
+    "main_activity_pieceJob",
+    "main_activity_selfEmployed",
+    "main_activity_student",
+    "main_activity_unemployedSeekingWork",
+    "employStatusHead_employed",
+    "employStatusHead_preferNotToSay",
+    "employStatusHead_retired",
+    "employStatusHead_selfEmployed",
+    "employStatusHead_unemployed",
+    "livingSitu18Years_bothBiologicalParents",
+    "livingSitu18Years_livingWithGuardian",
+    "livingSitu18Years_livingWithSingleParent",
+    "livingSitu18Years_other",
+    "parentsWorkedDiaspora6Months_noLivedWithMe",
+    "parentsWorkedDiaspora6Months_notApplicable",
+    "parentsWorkedDiaspora6Months_yesLeftWithGuardian",
+    "parentsWorkedDiaspora6Months_yesLeftWithOtherParent",
+    "relativeProblemWithDrugs_never",
+    "relativeProblemWithDrugs_preferNotToSay",
+    "relativeProblemWithDrugs_yesCurrently",
+    "relativeProblemWithDrugs_yesInThePast",
+    "mostUsedPlatform_facebook",
+    "mostUsedPlatform_instagram",
+    "mostUsedPlatform_other",
+    "mostUsedPlatform_telegram",
+    "mostUsedPlatform_tiktok",
+    "mostUsedPlatform_whatsapp",
+    "mostUsedPlatform_youtube"
+  ],
+  "top_5_features": [
+    {
+      "rank": 1,
+      "feature": "outOf5FriendsUseDrugs",
+      "label": "Proportion of close friends who use drugs",
+      "importance": 0.0613
+    },
+    {
+      "rank": 2,
+      "feature": "howTimesSeenDrugSupportContentIn30Days",
+      "label": "Frequency of exposure to drug-related content in the last 30 days",
+      "importance": 0.0537
+    },
+    {
+      "rank": 3,
+      "feature": "comfortableSharingPersonalProblems",
+      "label": "Comfort sharing personal problems with family",
+      "importance": 0.0446
+    },
+    {
+      "rank": 4,
+      "feature": "howFriendsFeelTryingDrugs",
+      "label": "Perceived peer approval of drug use",
+      "importance": 0.0418
+    },
+    {
+      "rank": 5,
+      "feature": "highestEducation",
+      "label": "Highest level of education",
+      "importance": 0.0398
+    }
+  ],
+  "top_5_feature_importance_method": "Mean Decrease in Gini; values reported in Chapter 4, Table 4.5.",
+  "chapter4_reported_metrics": {
+    "classification_report": {
+      "low": {
+        "precision": 0.86,
+        "recall": 0.85,
+        "f1-score": 0.86,
+        "support": 164.0
+      },
+      "moderate": {
+        "precision": 0.74,
+        "recall": 0.66,
+        "f1-score": 0.7,
+        "support": 91.0
+      },
+      "high": {
+        "precision": 0.88,
+        "recall": 0.93,
+        "f1-score": 0.91,
+        "support": 213.0
+      },
+      "accuracy": 0.85,
+      "macro avg": {
+        "precision": 0.83,
+        "recall": 0.81,
+        "f1-score": 0.82,
+        "support": 468.0
+      },
+      "weighted avg": {
+        "precision": 0.85,
+        "recall": 0.85,
+        "f1-score": 0.85,
+        "support": 468.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        140,
+        14,
+        10
+      ],
+      [
+        15,
+        60,
+        16
+      ],
+      [
+        8,
+        7,
+        198
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "low",
+      "moderate",
+      "high"
+    ],
+    "macro_f1": 0.82,
+    "accuracy": 0.85,
+    "evaluation_rows": 468,
+    "source": "R236635A_PROJECT_updated.docx, Chapter 4, Table 4.3 and Figure 4.2."
+  },
+  "typo_fixes": {
+    "main_activity": {
+      "formallyEmployed": "employed"
+    },
+    "parentsWorkedDiaspora6Months": {
+      "yesLesftWithGuardian": "yesLeftWithGuardian"
+    },
+    "rare_provinces_to_other": [
+      "masvingo",
+      "bulawayo",
+      "mashCentral",
+      "mashWest",
+      "matNorth"
+    ]
+  }
+}

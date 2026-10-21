@@ -1,0 +1,108 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+
+{% block title %}Objective 1: Survey Administration{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'predictor/css/survey.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="objective">
+
+    <div class="objective-header">
+        <span class="objective-eyebrow">Objective 1 of 5</span>
+        <h1>Survey Administration</h1>
+        <p class="subtitle">Structured socio-economic and digital-behaviour survey, live count from the current dataset.</p>
+    </div>
+
+    <!-- CARD 1: PROVINCES -->
+    <div class="obj-card chart-section">
+        <div class="stat-row">
+            <div class="stat-box">
+                <div class="stat-box-top">
+                    <div class="value">{{ stats.total_responses }}</div>
+                    <span class="badge {% if stats.target_met %}met{% else %}unmet{% endif %}">
+                        {{ stats.pct_of_target }}% of target
+                    </span>
+                </div>
+                <div class="label">Total responses (target: {{ stats.target }})</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-top">
+                    <div class="value">{{ stats.provinces_covered }}</div>
+                    <span class="badge {% if stats.provinces_required_met %}met{% else %}unmet{% endif %}">
+                        {% if stats.provinces_required_met %}Requirement met{% else %}Below minimum{% endif %}
+                    </span>
+                </div>
+                <div class="label">Provinces represented (minimum: 3)</div>
+            </div>
+        </div>
+
+        <h5 class="section-label">Responses by province</h5>
+        {% if stats.province_counts %}
+            {% for province, count in stats.province_counts.items %}
+            <div class="bar-row">
+                <div class="bar-label">{{ province }}</div>
+                <div class="bar-track">
+                    <div class="bar-fill"></div>
+                </div>
+                <div class="bar-value">{{ count }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-note">No responses recorded yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- CARD 2: AGE & GENDER -->
+    <div class="obj-card">
+        <!-- Age Section -->
+        <div class="chart-section">
+            <h5 class="section-label">Age distribution <span class="section-note">(target range: 15–35)</span></h5>
+            {% if stats.age_counts %}
+                {% for age, count in stats.age_counts.items %}
+                <div class="bar-row">
+                    <div class="bar-label">{{ age }}</div>
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                    <div class="bar-value">{{ count }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-note">No age data recorded yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Gender Section -->
+        <div class="chart-section">
+            <h5 class="section-label section-label-spaced">Gender distribution</h5>
+            {% if stats.gender_counts %}
+                {% for gender, count in stats.gender_counts.items %}
+                <div class="bar-row">
+                    <div class="bar-label">{{ gender }}</div>
+                    <div class="bar-track">
+                        <div class="bar-fill"></div>
+                    </div>
+                    <div class="bar-value">{{ count }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-note">No gender data recorded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Include external JS file -->
+<script src="{% static 'predictor/js/objectives.js' %}"></script>
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Alternative placement if your base.html provides an extra_js block -->
+    <script src="{% static 'predictor/js/survey.js' %}"></script>
+{% endblock %}

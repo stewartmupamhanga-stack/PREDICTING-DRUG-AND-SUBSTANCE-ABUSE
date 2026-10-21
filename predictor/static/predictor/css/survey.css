@@ -1,0 +1,253 @@
+/* ==========================================================================
+   Objective 1: Survey Administration
+   Path: static/predictor/css/objectives.css
+   ========================================================================== */
+
+.objective {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   1. Centered Header Section
+   -------------------------------------------------------------------------- */
+.objective-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6, 2rem);
+  padding-bottom: var(--space-5, 1.5rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+}
+
+.objective-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-700, #1f5c4d);
+  background: var(--teal-100, #dcece6);
+  padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.objective-header h1 {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: clamp(1.85rem, 1.4rem + 1.4vw, 2.6rem);
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  margin: 0 0 var(--space-2, 0.5rem);
+  line-height: 1.15;
+}
+
+.objective-header .subtitle {
+  font-size: 0.95rem;
+  color: var(--ink-500, #5b6b7c);
+  margin: 0 auto;
+  max-width: 60ch;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   2. Card Wrappers
+   -------------------------------------------------------------------------- */
+.obj-card {
+  background: var(--surface-1, #ffffff);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-6, 2rem);
+  margin-bottom: var(--space-5, 1.5rem);
+  box-shadow: 0 1px 3px rgba(19, 26, 34, 0.02);
+}
+
+/* --------------------------------------------------------------------------
+   3. Key Metric Stat Grid
+   -------------------------------------------------------------------------- */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4, 1rem);
+  margin-bottom: var(--space-6, 2rem);
+}
+
+.stat-box {
+  background: var(--surface-2, #eef1ee);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-4, 1rem) var(--space-5, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stat-box-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.stat-box .value {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  line-height: 1;
+}
+
+.stat-box .label {
+  font-size: 0.82rem;
+  color: var(--ink-500, #5b6b7c);
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge.met {
+  background: var(--teal-100, #dcece6);
+  color: var(--teal-700, #1f5c4d);
+}
+
+.badge.unmet {
+  background: var(--amber-100, #f4e6d3);
+  color: var(--amber-600, #b9762e);
+}
+
+/* --------------------------------------------------------------------------
+   4. Section Labels
+   -------------------------------------------------------------------------- */
+.section-label {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-4, 1rem);
+}
+
+.section-label-spaced {
+  margin-top: var(--space-6, 2rem);
+  padding-top: var(--space-5, 1.5rem);
+  border-top: 1px solid var(--hairline, #dfe3df);
+}
+
+.section-note {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--ink-500, #5b6b7c);
+  font-size: 0.82rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. Full-Width Scaling Data Distribution Bars
+   -------------------------------------------------------------------------- */
+.bar-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 60px;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-2, 0.5rem);
+  transition: background-color 0.15s ease;
+}
+
+.bar-row:hover {
+  background-color: var(--surface-2, #eef1ee);
+}
+
+.bar-row:last-child {
+  margin-bottom: 0;
+}
+
+.bar-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink-800, #1b2430);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Track stretches completely across the card */
+.bar-track {
+  width: 100%;
+  height: 14px;
+  background: var(--surface-2, #eef1ee);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Fill bar - highest count fills 100% of track length */
+.bar-fill {
+  height: 100%;
+  min-width: 6px; /* Ensures even low counts (e.g., 1 or 2) show a clear visible notch */
+  background: linear-gradient(90deg, var(--teal-700, #1f5c4d), var(--teal-500, #3f9682));
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar-row:hover .bar-fill {
+  background: linear-gradient(90deg, var(--teal-600, #2e7d6b), var(--teal-500, #3f9682));
+}
+
+.bar-value {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink-900, #131a22);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Empty State */
+.empty-note {
+  font-size: 0.85rem;
+  color: var(--ink-500, #5b6b7c);
+  font-style: italic;
+  padding: var(--space-3, 0.75rem);
+  background: var(--surface-2, #eef1ee);
+  border-radius: var(--radius-sm, 4px);
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .obj-card {
+    padding: var(--space-4, 1rem);
+  }
+  .bar-row {
+    grid-template-columns: 100px 1fr 45px;
+    gap: var(--space-2, 0.5rem);
+    padding: var(--space-2, 0.5rem) 0;
+  }
+  .bar-label, .bar-value {
+    font-size: 0.8rem;
+  }
+}

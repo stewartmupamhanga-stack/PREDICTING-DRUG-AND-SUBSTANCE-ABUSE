@@ -1,0 +1,675 @@
+/* ==========================================================================
+   Objective 5: Data-Driven Recommendations
+   Path: static/predictor/css/recommendations.css
+   ========================================================================== */
+
+.objective {
+  width: 100%;
+}
+
+/* Keep this page's palette readable with the application's dark theme. */
+.recommendations-page {
+  --ink-900: #f4f7f8;
+  --ink-800: #e4eaed;
+  --ink-700: #d0d9de;
+  --ink-500: #aebbc3;
+  --surface-1: #1a2128;
+  --surface-2: #232d35;
+  --hairline: rgba(222, 234, 239, 0.2);
+  --teal-800: #b5eee0;
+  --teal-700: #b5eee0;
+  --teal-600: #57c2ab;
+  --teal-100: rgba(63, 177, 152, 0.2);
+}
+
+/* Let this content use the full space to the right of the navigation. */
+.content-area:has(.recommendations-page) main {
+  width: 100%;
+  max-width: none;
+}
+
+.recommendations-page p {
+  max-width: none;
+}
+
+.recommendations-page > section,
+.recommendations-page > nav {
+  margin-bottom: 1.5rem;
+}
+
+.recommendations-page .obj-card {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+}
+
+.at-a-glance {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin: 0 0 1.25rem;
+}
+
+.at-a-glance > div {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 120px;
+  align-content: center;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--hairline);
+  border-top: 3px solid var(--teal-600);
+  border-radius: var(--radius-md, 8px);
+  background: linear-gradient(145deg, #1b252b, #151c21);
+}
+
+.glance-label,
+.predictor-score {
+  color: var(--ink-500);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.at-a-glance strong {
+  color: var(--ink-900);
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.15rem, 1rem + 0.7vw, 1.55rem);
+  line-height: 1.2;
+}
+
+.at-a-glance small {
+  color: var(--ink-700);
+  font-size: 0.84rem;
+}
+
+.section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md, 8px);
+  background: rgba(20, 27, 32, 0.92);
+}
+
+.section-nav a {
+  color: var(--ink-800);
+  border-radius: 5px;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.section-nav a:hover,
+.section-nav a:focus-visible {
+  color: #071511;
+  background: var(--teal-600);
+  outline: none;
+}
+
+.recommendations-page [id] {
+  scroll-margin-top: 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   1. Centered Header Section
+   -------------------------------------------------------------------------- */
+.objective-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6, 2rem);
+  padding-bottom: var(--space-5, 1.5rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+}
+
+.objective-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-700, #1f5c4d);
+  background: var(--teal-100, #dcece6);
+  padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.objective-header h1 {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: clamp(1.85rem, 1.4rem + 1.4vw, 2.6rem);
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  margin: 0 0 var(--space-2, 0.5rem);
+  line-height: 1.15;
+}
+
+.objective-header .subtitle {
+  font-size: 0.95rem;
+  color: var(--ink-500, #5b6b7c);
+  margin: 0 auto;
+  max-width: none;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   2. Card & Recommendation Block Component
+   -------------------------------------------------------------------------- */
+.obj-card {
+  background: var(--surface-1, #ffffff);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-6, 2rem);
+  margin-bottom: var(--space-5, 1.5rem);
+  box-shadow: 0 1px 3px rgba(19, 26, 34, 0.02);
+}
+
+.rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 1.25rem);
+}
+
+.rec-block {
+  background: var(--surface-1, #ffffff);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-left: 4px solid var(--teal-600, #2e7d6b);
+  border-radius: var(--radius-sm, 6px);
+  padding: var(--space-5, 1.5rem);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rec-block:hover {
+  box-shadow: 0 4px 12px rgba(19, 26, 34, 0.04);
+}
+
+.rec-block.risk-target {
+  border-left-color: #d97706; /* Warm amber for risk target */
+}
+
+.rec-block.protective-buffer {
+  border-left-color: var(--teal-600, #2e7d6b); /* Teal for protective factor */
+}
+
+/* Header & Tags within Block */
+.rec-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2, 0.5rem);
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.rec-feature-title {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink-900, #131a22);
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+}
+
+.rec-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.rec-tag.risk-target {
+  background: #4a351b;
+  color: #ffe0a3;
+}
+
+.rec-tag.protective-buffer {
+  background: var(--teal-100, #dcece6);
+  color: var(--teal-800, #164338);
+}
+
+/* Stat Means Pills */
+.rec-stats-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  margin-bottom: var(--space-3, 0.85rem);
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--surface-2, #eef1ee);
+  border: 1px solid var(--hairline, #dfe3df);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-sm, 4px);
+  font-size: 0.82rem;
+  color: var(--ink-700, #2b3644);
+}
+
+.stat-pill .label {
+  text-transform: capitalize;
+  font-weight: 500;
+  color: var(--ink-500, #5b6b7c);
+}
+
+.stat-pill .value {
+  font-weight: 700;
+  color: var(--ink-900, #131a22);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Narrative Body */
+.rec-block p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ink-700, #2b3644);
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. Empty State Card
+   -------------------------------------------------------------------------- */
+.empty-card {
+  text-align: center;
+  padding: var(--space-6, 3rem) var(--space-4, 1.5rem);
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.empty-card h3 {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 1.4rem;
+  color: var(--ink-900, #131a22);
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.empty-card p {
+  color: var(--ink-500, #5b6b7c);
+  font-size: 0.92rem;
+}
+
+.recommendations-page h2.section-label,
+.recommendation-principle h2 {
+  color: var(--ink-900, #131a22);
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 1.35rem;
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.section-intro,
+.recommendation-principle p {
+  color: var(--ink-700, #2b3644);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0 0 var(--space-4, 1rem);
+}
+
+.recommendation-principle {
+  border-left: 4px solid var(--teal-600, #2e7d6b);
+  background: linear-gradient(120deg, #1b292a, #1a2128 55%);
+}
+
+.chapter-result-card {
+  border-top: 3px solid var(--teal-600);
+}
+
+.chapter-result-grid > div {
+  min-height: 88px;
+}
+
+.chapter-result-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 1rem;
+}
+
+.chapter-result-grid > div {
+  background: var(--surface-2, #eef1ee);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-sm, 6px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem;
+}
+
+.chapter-result-grid span {
+  color: var(--ink-500, #5b6b7c);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+}
+
+.chapter-result-grid strong {
+  color: var(--ink-900, #131a22);
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.recommendation-table-wrap {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.recommendation-table {
+  border-collapse: collapse;
+  min-width: 900px;
+  width: 100%;
+  color: var(--ink-700, #2b3644);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.recommendation-table th,
+.recommendation-table td {
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+  padding: 0.85rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.recommendation-table thead th {
+  background: var(--surface-2, #eef1ee);
+  color: var(--ink-900, #131a22);
+  font-size: 0.78rem;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.recommendation-table tbody th {
+  min-width: 205px;
+  color: var(--ink-900, #131a22);
+  font-weight: 700;
+}
+
+.recommendation-table tbody th span {
+  color: var(--ink-500, #5b6b7c);
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.recommendation-table td:last-child {
+  min-width: 175px;
+}
+
+.chapter-rec-list {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.audience-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 1.35rem 0 0.35rem;
+  padding: 0.75rem 0;
+  color: var(--teal-700);
+  border-bottom: 1px solid var(--hairline);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+}
+
+.audience-heading:first-child {
+  margin-top: 0;
+}
+
+.audience-heading span {
+  display: inline-grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--teal-100);
+  color: var(--teal-800);
+  font-size: 0.72rem;
+}
+
+.chapter-rec-item {
+  align-items: flex-start;
+  border: 1px solid transparent;
+  border-bottom-color: var(--hairline);
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: 2.1rem minmax(0, 1fr);
+  padding: 1rem 0.75rem;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.chapter-rec-item:hover {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: var(--hairline);
+}
+
+.chapter-rec-item:last-child {
+  border-bottom: 0;
+}
+
+.chapter-rec-number {
+  align-items: center;
+  background: var(--teal-100, #dcece6);
+  border-radius: 50%;
+  color: var(--teal-800, #164338);
+  display: inline-flex;
+  font-weight: 800;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.chapter-rec-item h3 {
+  color: var(--ink-900, #131a22);
+  font-size: 1rem;
+  margin: 0 0 0.3rem;
+}
+
+.chapter-rec-item p,
+.caveat-list,
+.research-list {
+  color: var(--ink-700, #2b3644);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.chapter-rec-item p {
+  margin: 0;
+}
+
+.caveat-list,
+.research-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.caveat-list li,
+.research-list li {
+  margin: 0 0 0.65rem;
+  padding-left: 0.2rem;
+}
+
+.responsible-use-note {
+  background: #352b1c;
+  border: 1px solid #795b2d;
+  border-left: 4px solid #e3ad55;
+  color: #ffe5b3;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.6;
+  margin: 1.25rem 0 0;
+  padding: 0.85rem 1rem;
+}
+
+.caution-card {
+  border: 1px solid #795b2d;
+  border-top: 3px solid #e3ad55;
+}
+
+.caution-card .section-label {
+  color: #ffe0a3;
+}
+
+.caveat-list li::marker,
+.research-list li::marker {
+  color: var(--teal-600);
+  font-weight: 700;
+}
+
+.live-profile-card {
+  border-top: 3px solid var(--teal-600);
+}
+
+.predictor-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.predictor-card {
+  min-width: 0;
+  padding: 1.2rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md, 8px);
+  background: linear-gradient(150deg, #202a31, #181f25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+}
+
+.predictor-card header {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.predictor-rank {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--teal-100);
+  color: var(--teal-800);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.predictor-card h3 {
+  margin: 0 0 0.3rem;
+  color: var(--ink-900);
+  font-size: 1.03rem;
+  line-height: 1.35;
+}
+
+.predictor-score {
+  font-size: 0.68rem;
+  letter-spacing: 0.045em;
+}
+
+.importance-track {
+  height: 0.45rem;
+  margin: 1rem 0 1.1rem;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #10171b;
+}
+
+.importance-track span {
+  display: block;
+  width: var(--score);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #318f7d, #70d1b7);
+}
+
+.predictor-card p {
+  margin: 0 0 0.8rem;
+  color: var(--ink-700);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.predictor-card p strong,
+.lead-actors strong {
+  color: var(--ink-800);
+}
+
+.predictor-card .evidence {
+  padding: 0.65rem 0.75rem;
+  border-left: 2px solid #d49b4f;
+  background: rgba(220, 154, 79, 0.08);
+}
+
+.lead-actors {
+  display: grid;
+  gap: 0.2rem;
+  margin-top: 0.95rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.8rem;
+}
+
+.lead-actors span {
+  color: var(--ink-500);
+}
+
+.live-profile-card {
+  border-style: dashed;
+}
+
+.live-profile-table {
+  min-width: 600px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .at-a-glance {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .at-a-glance > div {
+    min-height: 0;
+    padding: 0.9rem 1rem;
+  }
+  .section-nav {
+    gap: 0.25rem;
+  }
+  .section-nav a {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  .obj-card {
+    padding: var(--space-4, 1rem);
+  }
+  .predictor-card {
+    padding: 1rem;
+  }
+  .rec-block {
+    padding: var(--space-4, 1rem);
+  }
+  .rec-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .chapter-rec-item {
+    gap: 0.65rem;
+    grid-template-columns: 1.8rem minmax(0, 1fr);
+  }
+}

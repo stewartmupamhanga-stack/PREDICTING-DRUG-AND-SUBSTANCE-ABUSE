@@ -1,0 +1,26 @@
+{% extends 'predictor/base.html' %}
+{% block title %}Confirm bulk upload{% endblock %}
+
+{% block content %}
+<div class="report">
+    <h2>Confirm bulk upload</h2>
+    <p><strong>{{ original_name }}</strong> — {{ row_count }} row(s) validated and ready.</p>
+
+    <form method="post" action="{% url 'bulk-upload' %}">
+        {% csrf_token %}
+        <input type="hidden" name="stage" value="confirm">
+        <input type="hidden" name="token" value="{{ token }}">
+        <input type="hidden" name="original_name" value="{{ original_name }}">
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="actions">
+            <button type="submit" name="action" value="save_only" class="btn">
+                Save only
+            </button>
+            <button type="submit" name="action" value="predict_save" class="btn btn-primary">
+                Predict &amp; Save
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

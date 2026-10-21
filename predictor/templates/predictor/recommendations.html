@@ -1,0 +1,156 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+
+{% block title %}Objective 5: Recommendations{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'predictor/css/recommendations.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="objective recommendations-page">
+    <header class="objective-header">
+        <span class="objective-eyebrow">Objective 5 of 5 · Chapter 5, Sections 5.5–5.7</span>
+        <h1>Recommendations for Community Prevention</h1>
+        <p class="subtitle">Actions drawn from the study’s five highest-ranked predictors, with implementation safeguards, study limitations and priorities for future research.</p>
+    </header>
+
+    <section class="at-a-glance" aria-label="Key findings at a glance">
+        <div><span class="glance-label">Model performance</span><strong>0.82 macro F1</strong><small>0.02 above the study target</small></div>
+        <div><span class="glance-label">Main challenge</span><strong>Moderate risk</strong><small>Recall was 0.66; follow-up matters</small></div>
+        <div><span class="glance-label">Use in practice</span><strong>Supportive guidance</strong><small>Human review must guide decisions</small></div>
+    </section>
+
+    <nav class="section-nav" aria-label="Recommendations page sections">
+        <a href="#study-findings">Study findings</a>
+        <a href="#top-predictors">Top predictors</a>
+        <a href="#implementation">Implementation</a>
+        <a href="#responsible-use">Responsible use</a>
+        <a href="#future-research">Future research</a>
+    </nav>
+
+    <section class="obj-card recommendation-principle">
+        <h2>How to interpret these findings</h2>
+        <p>The recommendations are tied to the five highest-ranked predictors. The study is cross-sectional and correlational, so the findings do not establish cause and effect. Use them to strengthen protective environments and improve prevention, not to assign blame to a person, family or neighbourhood.</p>
+    </section>
+
+    <section class="obj-card chapter-result-card" id="study-findings">
+        <h2 class="section-label">Study results informing these recommendations</h2>
+        <div class="chapter-result-grid">
+            <div><span>Chained model accuracy</span><strong>0.85</strong></div>
+            <div><span>Chained model macro F1</span><strong>0.82</strong></div>
+            <div><span>Moderate-class recall</span><strong>0.66</strong></div>
+            <div><span>Evaluation</span><strong>5-fold pooled OOF · n=468</strong></div>
+        </div>
+        <p class="section-intro">The model met the 0.80 macro-F1 target by 0.02. Moderate risk was the most difficult class to identify, which is why the chapter recommends human follow-up and cautious use of predictions.</p>
+    </section>
+
+    <section class="obj-card predictor-section" id="top-predictors">
+        <h2 class="section-label">Actions linked to the top five predictors</h2>
+        <p class="section-intro">The importance scores are the Chapter 4 Mean Decrease in Gini values. They rank predictors; they do not show direction of effect or causal influence.</p>
+        <div class="predictor-card-grid">
+            <article class="predictor-card"><header><span class="predictor-rank">01</span><div><h3>Proportion of close friends who use drugs</h3><span class="predictor-score">Gini importance · 0.0613</span></div></header><div class="importance-track" role="img" aria-label="Importance score 0.0613, highest ranked"><span style="--score:100%"></span></div><p class="evidence"><strong>Study evidence</strong> The group mean rose across Low, Moderate and High risk: 0.21, 0.69 and 1.31.</p><p><strong>Recommended action</strong> Train peer educators, teach refusal skills and provide supervised group activities that build positive peer networks.</p><div class="lead-actors"><strong>Lead actors</strong><span>Schools · youth clubs · churches · sports bodies</span></div></article>
+            <article class="predictor-card"><header><span class="predictor-rank">02</span><div><h3>Exposure to drug-related content</h3><span class="predictor-score">Gini importance · 0.0537</span></div></header><div class="importance-track" role="img" aria-label="Importance score 0.0537, second ranked"><span style="--score:87.6%"></span></div><p class="evidence"><strong>Study evidence</strong> Exposure rose from 1.21 in Low risk to 1.81 in Moderate risk.</p><p><strong>Recommended action</strong> Build digital and media literacy for young people and parents, and develop counter-messaging for platforms youth use.</p><div class="lead-actors"><strong>Lead actors</strong><span>Schools · universities · NGOs · communications teams</span></div></article>
+            <article class="predictor-card"><header><span class="predictor-rank">03</span><div><h3>Comfort sharing personal problems with family</h3><span class="predictor-score">Gini importance · 0.0446</span></div></header><div class="importance-track" role="img" aria-label="Importance score 0.0446, third ranked"><span style="--score:72.8%"></span></div><p class="evidence"><strong>Study evidence</strong> The observed direction was not simply protective: means were 3.36 in Low and 3.77 in High risk.</p><p><strong>Recommended action</strong> Offer safe-conversation programmes for families and guardians, then evaluate locally before scaling.</p><div class="lead-actors"><strong>Lead actors</strong><span>Health workers · social workers · church groups</span></div></article>
+            <article class="predictor-card"><header><span class="predictor-rank">04</span><div><h3>Perceived peer approval of drug use</h3><span class="predictor-score">Gini importance · 0.0418</span></div></header><div class="importance-track" role="img" aria-label="Importance score 0.0418, fourth ranked"><span style="--score:68.2%"></span></div><p class="evidence"><strong>Study evidence</strong> Moderate risk mean (1.50) was close to High (1.64), compared with 0.77 in Low.</p><p><strong>Recommended action</strong> Use early norm-correction campaigns that make the non-using majority visible before first use.</p><div class="lead-actors"><strong>Lead actors</strong><span>Schools · community leaders · peer educators</span></div></article>
+            <article class="predictor-card"><header><span class="predictor-rank">05</span><div><h3>Highest level of education</h3><span class="predictor-score">Gini importance · 0.0398</span></div></header><div class="importance-track" role="img" aria-label="Importance score 0.0398, fifth ranked"><span style="--score:65%"></span></div><p class="evidence"><strong>Study evidence</strong> The predictor ranked fifth, but the study did not establish a reliable direction of association.</p><p><strong>Recommended action</strong> Support participation in school and training, and extend outreach to under-represented out-of-school youth.</p><div class="lead-actors"><strong>Lead actors</strong><span>Education ministry · vocational centres · local government</span></div></article>
+        </div>
+    </section>
+
+    <section class="obj-card implementation-card" id="implementation">
+        <h2 class="section-label">Seven implementation recommendations</h2>
+        <div class="chapter-rec-list">
+            <h3 class="audience-heading"><span aria-hidden="true">01</span> Schools, youth groups and digital spaces</h3>
+            <article class="chapter-rec-item">
+                <span class="chapter-rec-number">1</span>
+                <div><h3>Prioritise the peer environment</h3>
+                    <p>Peer-related variables occupy the first and fourth places, and the proportion of drug-using friends rose steadily across all three risk groups. Programmes should therefore work with peer groups and networks rather than only with individuals. Peer-educator models and structured, supervised activities also address the unsupervised evenings that increased across the risk groups in Table 4.4.</p></div>
+            </article>
+            <article class="chapter-rec-item">
+                <span class="chapter-rec-number">2</span>
+                <div><h3>Intervene before first use</h3>
+                    <p>For peer approval and exposure to drug-related content, the large step occurs between the Low and Moderate groups, and Moderate respondents already resemble High respondents. Prevention that waits until frequent use is visible will therefore be late. Messaging should target attitudes, norms, and online exposure among youth who have not yet used, and the model’s Low-risk group should be treated as the main audience for primary prevention, not as a group requiring no attention.</p></div>
+            </article>
+            <article class="chapter-rec-item">
+                <span class="chapter-rec-number">3</span>
+                <div><h3>Invest in digital literacy and the online environment</h3>
+                    <p>Exposure to drug-related content ranked second, ahead of most family and socio-economic variables, which supports the inclusion of digital-behaviour indicators. Schools and tertiary institutions should integrate critical media literacy into guidance and counselling, and the Multi-Sectoral Drug and Substance Abuse Plan 2024 to 2030 should give explicit attention to digital channels, which the Zimbabwean literature identifies as a growing route for supply and normalisation (Government of Zimbabwe, 2024; Mugari, 2024).</p></div>
+            </article>
+            <h3 class="audience-heading"><span aria-hidden="true">02</span> Families and community services</h3>
+            <article class="chapter-rec-item">
+                <span class="chapter-rec-number">4</span>
+                <div><h3>Strengthen family communication, then evaluate</h3>
+                    <p>Family communication is informative, and evidence of public trust in families and schools, and of the belief that citizens must lead local prevention, supports community and family-led approaches (Masunungure, Moyo-Nyede and Muruvi, 2025). However, because the direction of the association in this sample was not the expected protective one, programmes in this area should be piloted and evaluated locally and should not assume that more family communication alone lowers risk.</p></div>
+            </article>
+            <h3 class="audience-heading"><span aria-hidden="true">03</span> Health, local government and policy</h3>
+            <article class="chapter-rec-item">
+                <span class="chapter-rec-number">5</span>
+                <div><h3>Use the model for supportive triage, with safeguards</h3>
+                    <p>Only trained community workers should use the tool, with informed consent and guardian consent for minors. Keep records anonymised and secure. Predictions must lead to supportive referral, never punishment, police disclosure or labelling. Treat Moderate predictions as uncertain and follow them with human assessment. Pilot and re-validate the tool in each new community.</p></div>
+            </article>
+            <article class="chapter-rec-item">
+                <span class="chapter-rec-number">6</span>
+                <div><h3>Align prevention with a public-health approach</h3>
+                    <p>The findings support the movement of national policy from enforcement towards prevention and harm reduction (Sixpence, 2025). Local government and the Ministry of Health and Child Care can use aggregated, anonymised risk patterns to target scarce resources to settings where peer exposure and digital exposure are greatest, without publishing results that stigmatise particular suburbs.</p></div>
+            </article>
+            <h3 class="audience-heading"><span aria-hidden="true">04</span> Research and evaluation</h3>
+            <article class="chapter-rec-item">
+                <span class="chapter-rec-number">7</span>
+                <div><h3>Improve future data collection</h3>
+                    <p>Future surveys should use fixed-choice forms to avoid typographical category errors, back-translate all language versions, and record the direction and wording of items consistently so that variables such as family communication can be interpreted more reliably.</p></div>
+            </article>
+        </div>
+    </section>
+
+    <section class="obj-card caution-card" id="responsible-use">
+        <h2 class="section-label">Limitations and responsible use</h2>
+        <ul class="caveat-list">
+            <li><strong>Representativeness:</strong> snowball and other non-probability recruitment means the results cannot be generalised statistically to all Zimbabwean youth. The sample also under-represents out-of-school, unemployed, older and some geographic groups.</li>
+            <li><strong>Self-report:</strong> fear of legal consequences and social desirability may have led to under-reporting; anonymity and trusted referral reduce but cannot remove this risk (Latkin et al., 2017).</li>
+            <li><strong>Risk categories:</strong> risk level is derived from survey answers. Moderate combines people with different histories and is the hardest class to predict; treat these predictions as especially uncertain.</li>
+            <li><strong>Validation:</strong> performance was assessed with out-of-fold validation within one sample. There was no independent external sample or confidence interval, and the reported macro F1 exceeded the 0.80 target by only 0.02.</li>
+            <li><strong>Feature importance:</strong> the ranking came from a flat three-class forest fitted to the full sample, not the chained model. Scores are close (0.0398–0.0613); ranks below first are not firm. Gini importance can favour variables with many levels and can be unstable when predictors are correlated (Hooker, Mentch and Zhou, 2021; Dube and Verster, 2024).</li>
+            <li><strong>Association is not causation:</strong> cross-sectional findings cannot show whether peer use or online content precedes a respondent’s own use, or follows it.</li>
+            <li><strong>Instrument and data quality:</strong> Shona and Ndebele versions were not formally back-translated; modal imputation and manual correction of data-entry inconsistencies may also affect interpretation.</li>
+        </ul>
+        <p class="responsible-use-note">The tool is for supportive guidance only. It must not replace professional judgement, become a basis for punishment, or be used to disclose or stigmatise individuals.</p>
+    </section>
+
+    <section class="obj-card" id="future-research">
+        <h2 class="section-label">Priorities for future research</h2>
+        <ol class="research-list">
+            <li>Validate prospectively on fresh samples from the same and new communities, ideally using probability-based or respondent-driven recruitment, and report confidence intervals for macro F1.</li>
+            <li>Follow respondents over time to test whether scores predict initiation or escalation and to distinguish cause from association.</li>
+            <li>Extend data collection to rural communities and out-of-school and unemployed youth.</li>
+            <li>Test importance direction and stability with held-out permutation importance, partial dependence or SHAP, and repeated samples.</li>
+            <li>Improve Moderate-class prediction by testing ordinal models, meaningful subgroups, cost-sensitive thresholds and additional predictors such as mental health and school engagement.</li>
+            <li>Compare the chained model with flat classification, logistic regression and gradient boosting under identical validation.</li>
+            <li>Evaluate indirect questioning, including randomised response or list experiments, to reduce under-reporting.</li>
+            <li>Audit fairness across gender, age and province, and assess probability calibration before operational use.</li>
+            <li>Evaluate peer-education and media-literacy interventions to see whether risk-targeted delivery improves on blanket messaging.</li>
+        </ol>
+    </section>
+
+    {% if stats %}
+    <section class="obj-card live-profile-card">
+        <h2 class="section-label">Current dataset profile</h2>
+        <p class="section-intro">These descriptive group summaries are calculated from the currently configured survey data. They are separate from the fixed Chapter 4 values above and should not be interpreted as causal effects.</p>
+        <div class="recommendation-table-wrap">
+            <table class="recommendation-table live-profile-table">
+                <thead><tr><th>Predictor</th><th>Low mean</th><th>Moderate mean</th><th>High mean</th></tr></thead>
+                <tbody>
+                    {% for stat in stats %}
+                    <tr>
+                        <th>{{ stat.label|default:stat.feature }}</th>
+                        <td>{{ stat.means.low|default:"—" }}</td>
+                        <td>{{ stat.means.moderate|default:"—" }}</td>
+                        <td>{{ stat.means.high|default:"—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

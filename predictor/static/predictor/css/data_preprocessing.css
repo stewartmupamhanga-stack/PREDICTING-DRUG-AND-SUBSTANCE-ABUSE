@@ -1,0 +1,435 @@
+/* ==========================================================================
+   Objective 2: Data Cleaning & Pre-processing
+   Path: static/predictor/css/data_preprocessing.css
+   ========================================================================== */
+
+.objective {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   1. Centered Header Section
+   -------------------------------------------------------------------------- */
+.objective-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6, 2rem);
+  padding-bottom: var(--space-5, 1.5rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+}
+
+.objective-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--teal-700, #1f5c4d);
+  background: var(--teal-100, #dcece6);
+  padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.objective-header h1 {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: clamp(1.85rem, 1.4rem + 1.4vw, 2.6rem);
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  margin: 0 0 var(--space-2, 0.5rem);
+  line-height: 1.15;
+}
+
+.objective-header .subtitle {
+  font-size: 0.95rem;
+  color: var(--ink-500, #5b6b7c);
+  margin: 0 auto;
+  max-width: 65ch;
+  line-height: 1.5;
+}
+
+.timestamp-note {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-700, #2b3644);
+  background: var(--surface-2, #eef1ee);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm, 4px);
+}
+
+/* --------------------------------------------------------------------------
+   2. Card Wrappers
+   -------------------------------------------------------------------------- */
+.obj-card {
+  background: var(--surface-1, #ffffff);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-6, 2rem);
+  margin-bottom: var(--space-5, 1.5rem);
+  box-shadow: 0 1px 3px rgba(19, 26, 34, 0.02);
+}
+
+/* --------------------------------------------------------------------------
+   3. Status Banners (Pass / Fail Threshold Checks)
+   -------------------------------------------------------------------------- */
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: var(--space-5, 1.5rem);
+  line-height: 1.4;
+}
+
+.status-banner.pass {
+  background-color: var(--teal-100, #dcece6);
+  color: var(--teal-800, #164338);
+  border: 1px solid var(--teal-200, #b8d9ce);
+}
+
+.status-banner.fail {
+  background-color: #fde8e8;
+  color: #9b1c1c;
+  border: 1px solid #f8b4b4;
+}
+
+/* --------------------------------------------------------------------------
+   4. Missing Values Data Table
+   -------------------------------------------------------------------------- */
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: var(--radius-sm, 6px);
+}
+
+.missing-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.missing-table th {
+  background-color: var(--surface-2, #eef1ee);
+  color: var(--ink-700, #2b3644);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+}
+
+.missing-table td {
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border-bottom: 1px solid var(--hairline, #dfe3df);
+  color: var(--ink-800, #1b2430);
+}
+
+.missing-table tr:last-child td {
+  border-bottom: none;
+}
+
+.missing-table tr:hover td {
+  background-color: var(--surface-2, #f4f6f4);
+}
+
+/* Value callouts & Exceeds Threshold Warning */
+.missing-table td:last-child {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.missing-table td.exceeds {
+  color: #c81e1e;
+  background-color: #fdf2f2;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   5. Class Balance Visual Graphs
+   -------------------------------------------------------------------------- */
+.section-label {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-900, #131a22);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-4, 1rem);
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 100px;
+  align-items: center;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-2, 0.5rem);
+  transition: background-color 0.15s ease;
+}
+
+.bar-row:hover {
+  background-color: var(--surface-2, #eef1ee);
+}
+
+.bar-row:last-child {
+  margin-bottom: 0;
+}
+
+.bar-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink-800, #1b2430);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+}
+
+.bar-track {
+  width: 100%;
+  height: 14px;
+  background: var(--surface-2, #eef1ee);
+  border: 1px solid var(--hairline, #dfe3df);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bar-fill {
+  height: 100%;
+  min-width: 6px;
+  background: linear-gradient(90deg, var(--teal-700, #1f5c4d), var(--teal-500, #3f9682));
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Optional dynamic color variations based on risk labels */
+.bar-fill.High, .bar-fill.high {
+  background: linear-gradient(90deg, #c81e1e, #f05252);
+}
+
+.bar-fill.Medium, .bar-fill.medium {
+  background: linear-gradient(90deg, #b9762e, #e3a008);
+}
+
+.bar-fill.Low, .bar-fill.low {
+  background: linear-gradient(90deg, var(--teal-700, #1f5c4d), var(--teal-500, #3f9682));
+}
+
+.bar-value {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink-900, #131a22);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.info-note {
+  color: var(--ink-500, #5b6b7c);
+  font-size: 0.85rem;
+  margin-top: var(--space-4, 1.25rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  background-color: var(--surface-2, #eef1ee);
+  border-left: 3px solid var(--teal-600, #2e7d6b);
+  border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0;
+  line-height: 1.4;
+}
+
+.info-note code {
+  font-family: var(--font-mono, monospace);
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  color: var(--ink-900, #131a22);
+}
+
+.documented-methods-card {
+  border-top: 3px solid var(--teal-600);
+}
+
+.methods-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.65rem;
+}
+
+.methods-heading h2 {
+  margin: 0;
+  color: var(--ink-900);
+  font-size: clamp(1.35rem, 1.1rem + 0.7vw, 1.8rem);
+}
+
+.documented-methods-card .results-kicker {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--teal-800);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.documented-methods-card .sample-size-badge {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-800);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.methods-intro {
+  max-width: none;
+  color: var(--ink-700);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.missingness-summary {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  margin: 1.2rem 0 1.5rem;
+  padding: 1rem;
+  border: 1px solid #795b2d;
+  border-left: 4px solid #e3ad55;
+  border-radius: 8px;
+  background: #30291f;
+}
+
+.missingness-icon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #4a351b;
+  color: #ffe0a3;
+  font-weight: 800;
+}
+
+.missingness-summary strong {
+  color: #ffe5b3;
+}
+
+.missingness-summary p {
+  max-width: none;
+  margin: 0.35rem 0 0;
+  color: #eadcc4;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.missingness-summary code,
+.preprocessing-steps code {
+  color: #c0f2e5;
+  background: #11181d;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 0.08rem 0.3rem;
+}
+
+.preprocessing-steps {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: preprocessing-step;
+}
+
+.preprocessing-steps li {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.preprocessing-steps li:last-child {
+  border-bottom: 0;
+}
+
+.step-number {
+  display: grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  place-items: center;
+  border-radius: 7px;
+  background: var(--teal-100);
+  color: var(--teal-800);
+  font-size: 0.76rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.preprocessing-steps h3 {
+  margin: 0 0 0.3rem;
+  color: var(--ink-900);
+  font-size: 1rem;
+}
+
+.preprocessing-steps p {
+  max-width: none;
+  margin: 0;
+  color: var(--ink-700);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.methods-caveat {
+  margin: 1rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--hairline);
+  color: var(--ink-500);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.methods-source {
+  margin: 0.65rem 0 0;
+  color: var(--ink-500);
+  font-size: 0.76rem;
+}
+
+/* Responsive adjust */
+@media (max-width: 600px) {
+  .obj-card {
+    padding: var(--space-4, 1rem);
+  }
+  .bar-row {
+    grid-template-columns: 100px 1fr 75px;
+    gap: var(--space-2, 0.5rem);
+  }
+  .methods-heading {
+    flex-direction: column;
+  }
+  .missingness-summary {
+    grid-template-columns: 1fr;
+  }
+  .preprocessing-steps li {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.65rem;
+    padding-inline: 0;
+  }
+}

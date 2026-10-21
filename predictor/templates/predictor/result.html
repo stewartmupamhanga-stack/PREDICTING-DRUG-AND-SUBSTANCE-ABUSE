@@ -1,0 +1,109 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+
+{% block title %}{% if batch %}Batch Results{% else %}Assessment Result{% endif %}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'predictor/css/result.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if batch %}
+
+<div class="report">
+    <h2>Batch results — {{ batch.original_filename }}</h2>
+    <p>{{ batch.total_rows }} row(s) processed on {{ batch.created_at }}</p>
+
+    <div class="table-scroll">
+        <table class="result-table">
+            <thead>
+                <tr><th>ID</th><th>Risk level</th><th>Used in last 30 days</th></tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row.external_id }}</td>
+                    <td class="{{ row.risk_level }}">
+                        {% if row.error %}
+                            <span class="error">Error</span>
+                        {% else %}
+                            {{ row.risk_level|default:"—"|title }}
+                        {% endif %}
+                    </td>
+                    <td>{{ row.used_30_days|yesno:"Yes,No,—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="actions no-print">
+        <a href="{% url 'bulk-result-download' batch.id %}" class="btn">Download CSV</a>
+        <button type="button" onclick="window.print()" class="btn">Print</button>
+
+        <form method="post" action="{% url 'bulk-result-forward' batch.id %}" class="forward-form">
+            {% csrf_token %}
+            <input type="email" name="recipient_email" placeholder="Recipient email" required>
+            <button type="submit" class="btn">Forward by email</button>
+        </form>
+    </div>
+
+    <a href="{% url 'home' %}" class="btn mt-4">Run another assessment</a>
+</div>
+
+{% else %}
+
+<div class="report">
+    <div class="label">Assessed risk level</div>
+
+    {% if risk_level == 'high' %}
+        <h1 class="high">High risk</h1>
+    {% elif risk_level == 'moderate' %}
+        <h1 class="moderate">Moderate risk</h1>
+    {% else %}
+        <h1 class="low">Low risk</h1>
+    {% endif %}
+
+    {% if confidence %}
+        <div class="confidence-note{% if risk_level == 'moderate' %} low-confidence{% endif %}">
+            Model confidence: {{ confidence }}%
+        </div>
+    {% endif %}
+
+    <div class="gauge-track">
+        <div class="gauge-marker" data-position="{{ gauge_position }}"></div>
+    </div>
+    <div class="gauge-scale">
+        <span>Low</span>
+        <span>Moderate</span>
+        <span>High</span>
+    </div>
+
+    {% if risk_level == 'high' %}
+        <p class="finding">Based on digital exposure and socio-economic markers, proactive community intervention is recommended.</p>
+    {% elif risk_level == 'moderate' %}
+        <p class="finding">Protective factors — family structure or structured activities — should be reinforced.</p>
+        <div class="caveat">
+            This category is harder to predict reliably from the current data — treat this result as a signal for closer follow-up rather than a firm classification.
+        </div>
+    {% else %}
+        <p class="finding">Existing prosocial bonds and digital habits act as strong protective buffers.</p>
+    {% endif %}
+
+    <a href="{% url 'home' %}" class="btn btn-report {{ risk_level }} mt-4">Run another assessment</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var marker = document.querySelector('.gauge-marker');
+        var target = marker.dataset.position;
+        requestAnimationFrame(function () {
+            marker.style.left = target + '%';
+        });
+    });
+</script>
+
+{% endif %}
+
+{% endblock %}

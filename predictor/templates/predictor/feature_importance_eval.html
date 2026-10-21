@@ -1,0 +1,141 @@
+{% extends 'predictor/base.html' %}
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}Objective 4: Feature Importance & Evaluation{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'predictor/css/feature_importance.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="objective">
+
+    <!-- Centered Header Section -->
+    <div class="objective-header">
+        <span class="objective-eyebrow">Objective 4 of 5</span>
+        <h1>Feature Importance &amp; Evaluation</h1>
+        <p class="subtitle">Top predictors by Mean Decrease in Gini and performance evaluation on out-of-fold cross-validated predictions.</p>
+    </div>
+
+    {% if not metrics %}
+        <!-- Empty State -->
+        <div class="obj-card empty-card">
+            <div class="empty-icon">📊</div>
+            <h3>No Evaluation Metadata Found</h3>
+            <p>Run model training first to populate feature importance rankings and confusion matrix statistics.</p>
+        </div>
+    {% else %}
+
+        <!-- CARD 1: TOP PREDICTORS & EVALUATION BANNER -->
+        <div class="obj-card chart-section">
+            {% if metrics.target_met %}
+                <div class="status-banner pass">
+                    ✓ Macro F1 of {{ metrics.chain_macro_f1|floatformat:3 }} meets the target of {{ metrics.target_f1 }}.
+                </div>
+            {% else %}
+                <div class="status-banner fail">
+                    ✕ Macro F1 of {{ metrics.chain_macro_f1|floatformat:3 }} is below the target of {{ metrics.target_f1 }}. See discussion in the dissertation on class-level performance, particularly the moderate category.
+                </div>
+            {% endif %}
+
+            <h5 class="section-label">Top 5 predictors (Gini importance)</h5>
+            {% for feat in metrics.top_5_features %}
+            <div class="bar-row">
+                <div class="bar-label">{{ feat.label|default:feat.feature }}</div>
+                <div class="bar-track">
+                    <div class="bar-fill"></div>
+                </div>
+                <div class="bar-value">{{ feat.importance|floatformat:3 }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- CARD 2: CLASSIFICATION REPORT & CONFUSION MATRIX -->
+        <div class="obj-card">
+            <h5 class="section-label">Classification report (out-of-fold)</h5>
+            <div class="table-wrapper">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th style="text-align: right;">Precision</th>
+                            <th style="text-align: right;">Recall</th>
+                            <th style="text-align: right;">F1-Score</th>
+                            <th style="text-align: right;">Support</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for label in metrics.chain_confusion_matrix_labels %}
+                        <tr>
+                            <td><strong>{{ label|capfirst }}</strong></td>
+                            <td>{{ metrics.chain_classification_report|get_item:label|get_item:"precision"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:label|get_item:"recall"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:label|get_item:"f1-score"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:label|get_item:"support"|floatformat:0 }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td><strong>Accuracy</strong></td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>{{ metrics.chain_classification_report.accuracy|floatformat:2 }}</td>
+                            <td>{{ metrics.reported_evaluation_rows|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Macro average</strong></td>
+                            <td>{{ metrics.chain_classification_report|get_item:"macro avg"|get_item:"precision"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:"macro avg"|get_item:"recall"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:"macro avg"|get_item:"f1-score"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:"macro avg"|get_item:"support"|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weighted average</strong></td>
+                            <td>{{ metrics.chain_classification_report|get_item:"weighted avg"|get_item:"precision"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:"weighted avg"|get_item:"recall"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:"weighted avg"|get_item:"f1-score"|floatformat:2 }}</td>
+                            <td>{{ metrics.chain_classification_report|get_item:"weighted avg"|get_item:"support"|floatformat:0 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h5 class="section-label section-label-spaced">Confusion matrix</h5>
+            <div class="table-wrapper">
+                <table class="cm-table">
+                    <thead>
+                        <tr>
+                            <th class="cm-row-header">Actual \ Predicted</th>
+                            {% for l in metrics.chain_confusion_matrix_labels %}
+                                <th>Predicted {{ l|capfirst }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in metrics.chain_confusion_matrix %}
+                        <tr>
+                            <th class="cm-row-header">Actual {{ metrics.chain_confusion_matrix_labels|index:forloop.counter0|capfirst }}</th>
+                            {% for val in row %}
+                                <td>{{ val }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    {% endif %}
+
+</div>
+
+<!-- Include external JS file -->
+<script src="{% static 'predictor/js/feature_importance.js' %}"></script>
+
+{% endblock %}
+
+{% block extra_js %}
+    <!-- Alternative placement if your base.html provides an extra_js block -->
+    <script src="{% static 'predictor/js/feature_importance.js' %}"></script>
+{% endblock %}
