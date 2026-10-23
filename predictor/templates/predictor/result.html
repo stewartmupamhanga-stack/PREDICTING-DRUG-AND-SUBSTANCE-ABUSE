@@ -15,6 +15,23 @@
     <h2>Batch results — {{ batch.original_filename }}</h2>
     <p>{{ batch.total_rows }} row(s) processed on {{ batch.created_at }}</p>
 
+    <section class="batch-summary" aria-labelledby="batch-summary-title">
+        <h3 id="batch-summary-title">Summary findings</h3>
+        <div class="summary-grid">
+            <div><strong>{{ counts.low }}</strong><span>Low risk</span></div>
+            <div><strong>{{ counts.moderate }}</strong><span>Moderate risk</span></div>
+            <div><strong>{{ counts.high }}</strong><span>High risk</span></div>
+            <div><strong>{{ counts.female }}</strong><span>Female respondents</span></div>
+            <div><strong>{{ counts.male }}</strong><span>Male respondents</span></div>
+            <div><strong>{{ counts.users }}</strong><span>Reported previous use</span></div>
+            <div><strong>{{ counts.non_users }}</strong><span>Reported no previous use</span></div>
+            <div><strong>{{ counts.errors }}</strong><span>Rows with errors</span></div>
+        </div>
+        <p class="finding">Among {{ successful_count }} successfully classified rows, {{ counts.low }} were Low, {{ counts.moderate }} Moderate and {{ counts.high }} High. These counts describe this uploaded file and do not establish causes or represent the wider population.</p>
+        <p class="finding">The Moderate group needs particular care: the study found this class harder to distinguish reliably, so follow up those results with a confidential human assessment. High results can prompt an offer of support, while Low results should not prevent someone from asking for help.</p>
+        <p class="caveat">Gender and previous-use counts are based on uploaded answers. Missing or unrecognised values are not counted.</p>
+    </section>
+
     <div class="table-scroll">
         <table class="result-table">
             <thead>
@@ -42,11 +59,6 @@
         <a href="{% url 'bulk-result-download' batch.id %}" class="btn">Download CSV</a>
         <button type="button" onclick="window.print()" class="btn">Print</button>
 
-        <form method="post" action="{% url 'bulk-result-forward' batch.id %}" class="forward-form">
-            {% csrf_token %}
-            <input type="email" name="recipient_email" placeholder="Recipient email" required>
-            <button type="submit" class="btn">Forward by email</button>
-        </form>
     </div>
 
     <a href="{% url 'home' %}" class="btn mt-4">Run another assessment</a>
@@ -81,14 +93,39 @@
     </div>
 
     {% if risk_level == 'high' %}
-        <p class="finding">Based on digital exposure and socio-economic markers, proactive community intervention is recommended.</p>
+        <p class="finding">The combined survey profile matched the model's High risk decision pattern. This is a screening signal, not a diagnosis or proof of substance use.</p>
+        <p><strong>Suggested next steps:</strong> arrange a confidential conversation with a trained worker, assess immediate safety and support needs, and offer a voluntary referral to appropriate health or counselling services.</p>
     {% elif risk_level == 'moderate' %}
         <p class="finding">Protective factors — family structure or structured activities — should be reinforced.</p>
+        <p class="finding">The combined survey profile fell between the model's Low and High decision patterns. Moderate results are less certain and need person-led follow-up before any decision.</p>
+        <p><strong>Suggested next steps:</strong> clarify the respondent's circumstances privately, identify support they want, and offer prevention or counselling resources without labelling them.</p>
         <div class="caveat">
             This category is harder to predict reliably from the current data — treat this result as a signal for closer follow-up rather than a firm classification.
         </div>
     {% else %}
-        <p class="finding">Existing prosocial bonds and digital habits act as strong protective buffers.</p>
+        <p class="finding">The combined survey profile matched the model's Low risk decision pattern. A Low result does not guarantee that there are no concerns or support needs.</p>
+        <p><strong>Suggested next steps:</strong> reinforce positive peer and family support, share prevention resources, and explain how the respondent can seek help if their situation changes.</p>
+    {% endif %}
+
+    {% if top_predictors %}
+    <section class="individual-explanation" aria-labelledby="individual-explanation-title">
+        <h2 id="individual-explanation-title">How the survey profile relates to this result</h2>
+        <p>The model uses answers together to assign a class. These are the respondent's answers on the study's five highest-ranked overall predictors; overall importance does not show that any one answer caused this classification.</p>
+        <ul>
+            {% for item in top_predictors %}
+            <li><strong>{{ item.label }}:</strong> {{ item.answer }} <span>(overall importance {{ item.importance|floatformat:4 }})</span><br>
+                {% if item.reference_answer %}
+                    {% if item.comparison_changed %}<span>In a one-answer comparison, substituting the study's most common answer ({{ item.reference_answer }}) changes the model result to {{ item.comparison_class|title }}.</span>
+                    {% else %}<span>In a one-answer comparison with the study's most common answer ({{ item.reference_answer }}), the model result stays {{ risk_level|title }}.</span>{% endif %}<br>
+                {% endif %}
+                {% if risk_level == 'high' %}<span>Possible supportive follow-up: {{ item.suggestion }}</span>
+                {% elif risk_level == 'moderate' %}<span>Explore whether support would help: {{ item.suggestion }}</span>
+                {% else %}<span>Protective check-in: {{ item.suggestion }}</span>{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        <p class="caveat">The one-answer comparisons use the most common study response as a reference. They show sensitivity to that substitution, not cause and effect; answers can interact. Use this result alongside professional judgement.</p>
+    </section>
     {% endif %}
 
     <a href="{% url 'home' %}" class="btn btn-report {{ risk_level }} mt-4">Run another assessment</a>

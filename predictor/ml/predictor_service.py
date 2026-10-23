@@ -147,3 +147,36 @@ def predict(raw_data: dict) -> dict:
         used_30 = int(used_30)
 
     return {"risk_level": result["risk_level"], "used_30_days": used_30}
+
+
+def compare_with_common_responses(raw_data: dict, feature_names: list[str]) -> dict:
+    """Compare a prediction with one study-common answer changed at a time.
+
+    This is a local sensitivity check, not a causal or formal feature
+    attribution. The reference values are the modal answers in the configured
+    source survey data.
+    """
+    try:
+        modes = pd.read_csv(settings.SURVEY_DATA_CSV, usecols=feature_names).mode(dropna=True).iloc[0]
+    except (OSError, ValueError, KeyError, IndexError):
+        return {}
+
+    original_class = predict(raw_data).get("risk_level")
+    comparisons = {}
+    for feature in feature_names:
+        if feature not in raw_data or feature not in modes.index or pd.isna(modes[feature]):
+            continue
+        reference = str(modes[feature])
+        observed = str(raw_data[feature])
+        if observed == reference:
+            comparisons[feature] = {"reference": reference, "changed": False, "risk_level": original_class}
+            continue
+        counterfactual = dict(raw_data)
+        counterfactual[feature] = reference
+        changed_class = predict(counterfactual).get("risk_level")
+        comparisons[feature] = {
+            "reference": reference,
+            "changed": changed_class != original_class,
+            "risk_level": changed_class,
+        }
+    return comparisons

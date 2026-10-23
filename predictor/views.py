@@ -50,14 +50,136 @@ def compute_gauge_position(risk_level, confidence):
     return round(position, 1)
 
 
+def _predictor_follow_up(feature, answer, risk_level):
+    """Return supportive next steps tailored to the answer and predicted class."""
+    answer = str(answer or '').strip().lower()
+    elevated = risk_level == 'high'
+    uncertain = risk_level == 'moderate'
+
+    if feature == 'outOf5FriendsUseDrugs':
+        if answer in {'3_4', '5'}:
+            if elevated:
+                return 'Ask how peer settings affect the respondent and offer supportive peer activities and refusal-skills resources.'
+            if uncertain:
+                return 'Explore the respondent’s comfort in peer settings and offer positive group activities if wanted.'
+            return 'Offer voluntary peer-led prevention activities while recognising the respondent’s Low result.'
+        if answer == '0':
+            if elevated:
+                return 'Do not assume peer exposure; discuss other support needs privately and identify trusted social supports.'
+            if uncertain:
+                return 'Ask what other circumstances may be relevant; this answer alone does not explain the Moderate result.'
+            return 'Encourage the respondent to maintain supportive friendships and existing positive activities.'
+        if elevated:
+            return 'Discuss peer influences without blame and offer practical ways to strengthen supportive friendships.'
+        if uncertain:
+            return 'Check whether the respondent wants help navigating peer pressure and identify supportive activities.'
+        return 'Reinforce the respondent’s positive peer supports and share prevention resources if useful.'
+
+    if feature == 'howTimesSeenDrugSupportContentIn30Days':
+        if answer in {'often', 'daily'}:
+            if elevated:
+                return 'Ask what the respondent sees online and offer media-literacy support and reliable, age-appropriate resources.'
+            if uncertain:
+                return 'Clarify whether frequent exposure is helpful or distressing, then offer trusted online resources.'
+            return 'Support healthy media habits and help the respondent identify reliable sources.'
+        if answer in {'never', 'rarely'}:
+            if elevated:
+                return 'Do not infer that low exposure explains the result; discuss other answers and offer confidential support.'
+            if uncertain:
+                return 'Explore other relevant circumstances; this answer does not account for the Moderate result by itself.'
+            return 'Share optional, reliable prevention resources without increasing unwanted exposure.'
+        if elevated:
+            return 'Discuss the content and its effect on the respondent, and offer reliable sources and supportive follow-up.'
+        if uncertain:
+            return 'Ask whether the content has affected the respondent and offer trusted resources if they want them.'
+        return 'Encourage balanced media habits and access to reliable information.'
+
+    if feature == 'comfortableSharingPersonalProblems':
+        low_comfort = answer in {'stronglydisagree', 'disagree'}
+        high_comfort = answer in {'agree', 'stronglyagree'}
+        if low_comfort:
+            if elevated:
+                return 'Offer a private conversation with a trained worker or another support channel the respondent chooses; do not pressure family disclosure.'
+            if uncertain:
+                return 'Ask which trusted person or confidential service would feel safe; do not treat limited family communication as a diagnosis.'
+            return 'Make confidential support options available even if the respondent does not want to speak with family.'
+        if high_comfort:
+            if elevated:
+                return 'With the respondent’s agreement, involve a trusted support person and offer a confidential professional referral.'
+            if uncertain:
+                return 'Ask whether they want a trusted person involved in follow-up and agree on a comfortable next step.'
+            return 'Recognise this communication channel as an option while keeping other confidential supports available.'
+        if elevated:
+            return 'Ask how the respondent prefers to seek support and offer a confidential option.'
+        if uncertain:
+            return 'Discuss what would make support feel comfortable and let the respondent choose a follow-up option.'
+        return 'Keep a range of trusted and confidential support options accessible.'
+
+    if feature == 'howFriendsFeelTryingDrugs':
+        approving = answer in {'approve', 'stronglyapprove'}
+        disapproving = answer in {'disapprove', 'stronglydisapprove'}
+        if approving:
+            if elevated:
+                return 'Explore peer pressure without blame and offer refusal-skills practice and supportive peer groups.'
+            if uncertain:
+                return 'Ask whether peer expectations create pressure and offer practical, voluntary prevention support.'
+            return 'Offer optional peer-led prevention resources and reinforce the respondent’s existing supports.'
+        if disapproving:
+            if elevated:
+                return 'Acknowledge this reported protective peer norm, then discuss other support needs indicated by the full profile.'
+            if uncertain:
+                return 'Recognise this reported protective norm while checking other circumstances in a supportive conversation.'
+            return 'Reinforce the respondent’s supportive peer environment and share prevention resources if useful.'
+        if elevated:
+            return 'Discuss how the respondent experiences peer expectations and offer non-judgemental prevention support.'
+        if uncertain:
+            return 'Clarify how peer expectations feel to the respondent and identify supports they would find useful.'
+        return 'Share balanced prevention information and encourage supportive peer connections.'
+
+    if feature == 'highestEducation':
+        education_option = {
+            'somesecondary': 'Ask whether school continuation or foundational learning support would be useful.',
+            'ordinarylevel': 'Offer information on further study, vocational training, or work pathways if wanted.',
+            'alevel': 'Offer information on tertiary study, vocational training, or employment pathways if wanted.',
+            'tetiary': 'Ask whether the respondent would value help accessing student or community support services.',
+        }.get(answer, 'Ask whether any education or training support would be useful.')
+        if risk_level == 'high':
+            return f'{education_option} Pair any offer with a supportive check-in; do not treat education level as a cause of risk.'
+        if uncertain:
+            return f'{education_option} This answer alone does not explain the Moderate result.'
+        return f'{education_option} Do not infer risk from education level.'
+
+    return 'Discuss this answer in context and let the respondent choose whether they want follow-up support.'
+
+
 def submit_assessment(request):
     if request.method == 'POST':
         form = AssessmentForm(request.POST)
         if form.is_valid():
             prediction = predictor_service.predict_details(form.cleaned_data)
+            metrics = load_metrics() or {}
+            top_predictors = []
+            for item in metrics.get('top_5_features', []):
+                key = item.get('feature')
+                if key in form.cleaned_data:
+                    value = form.cleaned_data[key]
+                    field = form.fields.get(key)
+                    display = dict(field.choices).get(value, value) if field else value
+                    suggestion = _predictor_follow_up(key, value, prediction['risk_level'])
+                    top_predictors.append({**item, 'answer': display, 'suggestion': suggestion})
+            comparisons = predictor_service.compare_with_common_responses(
+                form.cleaned_data, [item.get('feature') for item in top_predictors]
+            )
+            for item in top_predictors:
+                comparison = comparisons.get(item.get('feature'), {})
+                choices = dict(form.fields[item['feature']].choices)
+                item['reference_answer'] = choices.get(comparison.get('reference'), comparison.get('reference', ''))
+                item['comparison_changed'] = comparison.get('changed', False)
+                item['comparison_class'] = comparison.get('risk_level', prediction['risk_level'])
             context = {
                 'risk_level': prediction['risk_level'],
                 'confidence': round(prediction['confidence'] * 100),
+                'top_predictors': top_predictors,
             }
 
             context['gauge_position'] = compute_gauge_position(
@@ -587,7 +709,18 @@ def bulk_upload_view(request):
 def bulk_result_view(request, batch_id):
     batch = get_object_or_404(BulkBatch, pk=batch_id)
     rows = batch.rows.all().order_by("id")
-    return render(request, "predictor/result.html", {"batch": batch, "rows": rows})
+    successful = [row for row in rows if not row.error]
+    counts = {
+        "low": sum(row.risk_level == "low" for row in successful),
+        "moderate": sum(row.risk_level == "moderate" for row in successful),
+        "high": sum(row.risk_level == "high" for row in successful),
+        "female": sum(str((row.raw_data or {}).get("gender", "")).strip().lower() == "female" for row in successful),
+        "male": sum(str((row.raw_data or {}).get("gender", "")).strip().lower() == "male" for row in successful),
+        "users": sum(str((row.raw_data or {}).get("everUsedIllegalDrugs", "")).strip().lower() in {"yes", "yes, used", "true", "1"} for row in successful),
+        "non_users": sum(str((row.raw_data or {}).get("everUsedIllegalDrugs", "")).strip().lower() in {"no", "never", "false", "0"} for row in successful),
+        "errors": sum(bool(row.error) for row in rows),
+    }
+    return render(request, "predictor/result.html", {"batch": batch, "rows": rows, "counts": counts, "successful_count": len(successful)})
 
 
 def bulk_result_download_view(request, batch_id):

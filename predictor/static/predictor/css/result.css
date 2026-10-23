@@ -165,7 +165,8 @@
     --ink: var(--ink-800);
     --ink-soft: var(--ink-700);
     --risk-high: var(--risk-elevated);
-    max-width: 1040px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
     border: 1px solid var(--line);
     border-radius: 14px;
@@ -185,6 +186,49 @@
     max-width: 72ch;
     color: var(--ink-700);
 }
+
+.batch-summary,
+.individual-explanation {
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.batch-summary h3,
+.individual-explanation h2 {
+    color: var(--ink-900);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.summary-grid > div {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-2);
+}
+
+.summary-grid strong {
+    color: var(--ink-900);
+    font: 600 1.5rem/1.1 var(--font-display);
+}
+
+.summary-grid span,
+.individual-explanation li span {
+    color: var(--ink-500);
+    font-size: 0.85rem;
+}
+
+.individual-explanation li { margin: 0.55rem 0; }
 
 .report .label {
     color: var(--ink-500);
