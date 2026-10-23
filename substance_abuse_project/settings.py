@@ -27,9 +27,16 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").strip().lower() in {"1", "true", "yes", "on"}
 
-ALLOWED_HOSTS = []
+if not DEBUG and SECRET_KEY.startswith("django-insecure-local-"):
+    raise ValueError("Set DJANGO_SECRET_KEY to a private production value when DJANGO_DEBUG is False.")
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if host.strip()
+]
 
 
 # Application definition
@@ -122,11 +129,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 # Directories where Django searches for additional static files (development)
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Points to a top-level 'static' folder in your project
-]
+STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").is_dir() else []
 
 # Directory where static files are collected for deployment (production)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
